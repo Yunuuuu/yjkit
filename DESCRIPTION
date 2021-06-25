@@ -1,0 +1,48 @@
+Package: yjkit
+Type: Package
+Title: Toolkit for Yun and Jin (yjkit),
+Version: 0.1.0
+Author: person("Yun", "Peng", email = yunyunpp96@outlook.com,
+               role = c("aut", "cre"))
+Maintainer: Yun <yunyunpp96@outlook.com>
+Description: A miscellaneous toolkit including analysis algorithm, visualization
+  tools and other utility functions. This package is just for personal use.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports: 
+  magrittr, 
+  tibble,
+  stringr,
+  dplyr,
+  forcats,
+  ggplot2,
+  rlang,
+  broom,
+  purrr,
+  tidyr,
+  data.table
+Suggests: 
+  matrixStats,
+  methods,
+  e1071, 
+  paletteer,
+  preprocessCore,
+  S4Vectors,
+  TCGAbiolinks,
+  BiocParallel,
+  GenomicRanges,
+  ABSOLUTE,
+  Biobase,
+  GSEABase,
+  GSVA,
+  survival,
+  fastmatch,
+  GenomeInfoDb,
+  SummarizedExperiment,
+  testthat (>= 3.0.0)
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Config/testthat/edition: 3
+Depends: 
+    R (>= 3.5.0)
