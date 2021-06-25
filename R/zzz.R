@@ -1,6 +1,6 @@
 .onLoad <- function(libname, pkgname) {
 
-  version <- packageDescription(pkgname, fields = "Version")
+  version <- utils::packageDescription(pkgname, fields = "Version")
 
   # packageStartupMessage(
   #

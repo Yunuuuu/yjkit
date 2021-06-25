@@ -24,7 +24,6 @@ Imports:
   data.table
 Suggests: 
   matrixStats,
-  methods,
   e1071, 
   paletteer,
   preprocessCore,

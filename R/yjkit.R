@@ -12,5 +12,4 @@
 #' @section Visualization Functions:
 #' @docType package
 #' @name yjkit
-#' @import methods
 NULL

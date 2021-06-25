@@ -54,7 +54,6 @@ geom_label_npc <- function(mapping = NULL, data = NULL,
 #' @seealso
 #'   \code{\link[ggplot2]{ggproto}}
 #' @rdname ggplot2-ggproto-npc
-#' @details
 #' @format NULL
 #' @usage NULL
 #' @export
