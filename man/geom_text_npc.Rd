@@ -145,19 +145,16 @@ ggplot2::ggplot(df) +
 
 ggplot2::ggplot(data = mtcars, mapping = aes(wt, mpg)) +
   ggplot2::geom_point() +
-  geom_text_npc(data = df, aes(x_npc = x, y_npc = y, label = text),
-                inherit.aes = FALSE)
+  geom_text_npc(data = df, aes(x_npc = x, y_npc = y, label = text))
 
 ggplot2::ggplot(data = mtcars, mapping = aes(wt, mpg)) +
   ggplot2::geom_point() +
-  geom_text_npc(data = df, aes(x_npc = x, y_npc = y, label = text),
-                inherit.aes = FALSE) +
+  geom_text_npc(data = df, aes(x_npc = x, y_npc = y, label = text)) +
   ggplot2::expand_limits(y = 40, x = 6)
 
 ggplot2::ggplot(data = mtcars) +
   ggplot2::geom_point(mapping = aes(wt, mpg)) +
-  geom_label_npc(data = df, aes(x_npc = x, y_npc = y, label = text),
-                 inherit.aes = FALSE)
+  geom_label_npc(data = df, aes(x_npc = x, y_npc = y, label = text))
 }
 \seealso{
 \code{\link[ggplot2]{geom_text}}

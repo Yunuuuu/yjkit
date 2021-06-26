@@ -132,16 +132,48 @@ ggscale_paletteer <- function(palette = "nejm",
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @details See \code{\link{ggplot2::annotate}}
 #' @export
-ggannotate_npc <- function(geom, x, y, na.rm = FALSE, ...){
+ggannotate_npc <- function(geom, x = NULL, y = NULL,
+                           ..., na.rm = FALSE){
 
   if (!geom %in% c("text", "label")) stop(
     'geom must be one of "text" and "label"'
   )
-  ggplot2::annotate(geom = stringr::str_c(geom, "_npc", sep = ""),
-                    x_npc = x,
-                    y_npc = y,
-                    na.rm = na.rm,
-                    ...)
+  position <- purrr::compact(list(
+    x_npc = x, y_npc = y
+  ))
+  aesthetics <- c(position, list(...))
+
+  # Check that all aesthetic have compatible lengths
+  lengths <- vapply(aesthetics, length, integer(1))
+  n <- unique(lengths)
+
+  # if there is more than one unique length, ignore constants
+  if (length(n) > 1L) {
+    n <- setdiff(n, 1L)
+  }
+
+  # if there is still more than one unique length, we error out
+  if (length(n) > 1L) {
+    bad <- lengths != 1L
+    details <- paste(names(aesthetics)[bad], " (", lengths[bad], ")",
+                     sep = "", collapse = ", ")
+    rlang::abort(glue("Unequal parameter lengths: {details}"))
+  }
+
+  data <- vctrs::new_data_frame(position, n = n)
+  ggplot2::layer(
+    geom = stringr::str_c(geom, "_npc", sep = ""),
+    params = list(
+      na.rm = na.rm,
+      ...
+    ),
+    stat = ggplot2::StatIdentity,
+    position = ggplot2::PositionIdentity,
+    data = data,
+    mapping = ggplot2::aes_all(names(data)),
+    inherit.aes = FALSE,
+    show.legend = FALSE
+  )
 }
 
 #' Create an ggplot2 object with annotation
@@ -176,14 +208,14 @@ ggannotate_npc <- function(geom, x, y, na.rm = FALSE, ...){
 #'   \code{\link[grid]{textGrob}} and \code{\link[ggplot2]{element_text}}
 #' @return a ggplot2 object with annotation
 #' @examples
-#'   gganno(mtcars, aes(cyl, mpg), label = "a")
+#'   gganno_text(mtcars, label = "a", label_position = c(0.5, 0.5))
 #' @author Yun \email{yunyunpp96@@outlook.com}
-#' @export
 gganno_text <- function(data, mapping = NULL,
                         label, format_label = TRUE,
                         label_position = c(0.02, 1),
                         label_justification = NULL,
-                        label_sep = NULL, ggtheme = ggthemes::theme_few(),
+                        label_sep = NULL,
+                        ggtheme = ggthemes::theme_few(),
                         ...){
 
   if (!class(label_position) %in% c("numeric", "character")) {
@@ -210,7 +242,6 @@ gganno_text <- function(data, mapping = NULL,
     ))
   }
 
-  label_justification <- grid::valid.just(label_justification)
 
   if (!ggplot2::is.theme(ggtheme)) {
     ggtheme <- rlang::exec(ggtheme)

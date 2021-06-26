@@ -59,7 +59,7 @@ a ggplot2 object with annotation
 This function Creates an ggplot2 object with annotation.
 }
 \examples{
-  gganno(mtcars, aes(cyl, mpg), label = "a")
+  gganno_text(mtcars, label = "a", label_position = c(0.5, 0.5))
 }
 \author{
 Yun \email{yunyunpp96@outlook.com}
