@@ -81,25 +81,28 @@
 #'   y_chr = c("bottom", "top", "bottom", "top", "middle"),
 #'   text = c("bottom-left", "top-left", "bottom-right", "top-right", "center-middle")
 #' )
-#' ggplot(df) +
+#' ggplot2::ggplot(df) +
 #'   geom_text_npc(aes(x_npc = x, y_npc = y, label = text))
 #'
-#' ggplot(df) +
+#' ggplot2::ggplot(df) +
 #'   geom_text_npc(aes(x_npc = x_chr, y_npc = y_chr, label = text))
 #'
-#' ggplot(data = mtcars, mapping = aes(wt, mpg)) +
-#'   geom_point() +
-#'   geom_text_npc(data = df, aes(x_npc = x, y_npc = y, label = text))
+#' ggplot2::ggplot(data = mtcars, mapping = aes(wt, mpg)) +
+#'   ggplot2::geom_point() +
+#'   geom_text_npc(data = df, aes(x_npc = x, y_npc = y, label = text),
+#'                 inherit.aes = FALSE)
 #'
-#' ggplot(data = mtcars, mapping = aes(wt, mpg)) +
-#'   geom_point() +
-#'   geom_text_npc(data = df, aes(x_npc = x, y_npc = y, label = text)) +
-#'   expand_limits(y = 40, x = 6)
+#' ggplot2::ggplot(data = mtcars, mapping = aes(wt, mpg)) +
+#'   ggplot2::geom_point() +
+#'   geom_text_npc(data = df, aes(x_npc = x, y_npc = y, label = text),
+#'                 inherit.aes = FALSE) +
+#'   ggplot2::expand_limits(y = 40, x = 6)
 #'
-#' ggplot(data = mtcars) +
-#'   geom_point(mapping = aes(wt, mpg)) +
-#'   geom_label_npc(data = df, aes(x_npc = x, y_npc = y, label = text))
-#'
+#' ggplot2::ggplot(data = mtcars) +
+#'   ggplot2::geom_point(mapping = aes(wt, mpg)) +
+#'   geom_label_npc(data = df, aes(x_npc = x, y_npc = y, label = text),
+#'                  inherit.aes = FALSE)
+
 geom_text_npc <- function(mapping = NULL, data = NULL,
                           stat = "identity", position = "identity",
                           ...,
@@ -109,10 +112,10 @@ geom_text_npc <- function(mapping = NULL, data = NULL,
                           check_overlap = FALSE,
                           na.rm = FALSE,
                           show.legend = NA,
-                          inherit.aes = TRUE) {
+                          inherit.aes = FALSE) {
   if (!missing(nudge_x) || !missing(nudge_y)) {
     if (!missing(position)) {
-      abort("You must specify either `position` or `nudge_x`/`nudge_y`.")
+      rlang::abort("You must specify either `position` or `nudge_x`/`nudge_y`.")
     }
 
     position <- ggplot2::position_nudge(nudge_x, nudge_y)
@@ -148,8 +151,8 @@ GeomTextNpc <- ggplot2::ggproto(
   draw_panel = function(data, panel_params, coord, parse = FALSE,
                         na.rm = FALSE, check_overlap = FALSE) {
 
-    data$x_npc <- grid::valid.just(data$x_npc)
-    data$y_npc <- grid::valid.just(data$y_npc)
+    data$x_npc <- valid_npc(data$x_npc)
+    data$y_npc <- valid_npc(data$y_npc)
 
     ranges <- coord$backtransform_range(panel_params)
 

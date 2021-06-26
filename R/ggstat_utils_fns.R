@@ -22,7 +22,8 @@
 #'   "\code{center}", "\code{top}"). There are two special alignments:
 #'   "\code{inward}" and "\code{outward}". Inward always aligns text towards the
 #'   center, and outward aligns it away from the center.
-#' @param anno_statistic a scalar logical, Should test statistic added in label
+#' @param anno_statistic a scalar logical, Should test statistic be annotated in
+#'   the label
 #' @param label_sep see argument \code{label}. String to insert between the test
 #'   statistic and test P-value.
 #' @param ggtheme a ggplot2 theme object. Provided as a ggplot2 theme object or
@@ -37,8 +38,8 @@
 #'   test results
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @examples
-#'   gganno_between_test(mtcars, aes(cyl, mpg)) +
-#'   geom_boxplot()
+#' gganno_between_test(mtcars, aes(cyl, mpg)) +
+#'   ggplot2::geom_boxplot()
 #' @export
 gganno_between_test <- function(data, mapping = aes(x, y, ...),
                                 type = c("nonparametric", "parametric"),

@@ -311,7 +311,7 @@ run_ssgsea <- function(
 
     rval <- ssgsea_es
     names(rval)[names(rval) == "ES"] <- "exprs"
-    rval <- new(
+    rval <- methods::new(
       "ExpressionSet",
       assayData = rval,
       phenoData = Biobase::phenoData(data_set),

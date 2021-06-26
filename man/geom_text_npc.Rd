@@ -20,7 +20,7 @@ geom_label_npc(
   label.size = 0.25,
   na.rm = FALSE,
   show.legend = NA,
-  inherit.aes = TRUE
+  inherit.aes = FALSE
 )
 
 geom_text_npc(
@@ -35,7 +35,7 @@ geom_text_npc(
   check_overlap = FALSE,
   na.rm = FALSE,
   show.legend = NA,
-  inherit.aes = TRUE
+  inherit.aes = FALSE
 )
 }
 \arguments{
@@ -137,25 +137,27 @@ df <- data.frame(
   y_chr = c("bottom", "top", "bottom", "top", "middle"),
   text = c("bottom-left", "top-left", "bottom-right", "top-right", "center-middle")
 )
-ggplot(df) +
+ggplot2::ggplot(df) +
   geom_text_npc(aes(x_npc = x, y_npc = y, label = text))
 
-ggplot(df) +
+ggplot2::ggplot(df) +
   geom_text_npc(aes(x_npc = x_chr, y_npc = y_chr, label = text))
 
-ggplot(data = mtcars, mapping = aes(wt, mpg)) +
-  geom_point() +
-  geom_text_npc(data = df, aes(x_npc = x, y_npc = y, label = text))
+ggplot2::ggplot(data = mtcars, mapping = aes(wt, mpg)) +
+  ggplot2::geom_point() +
+  geom_text_npc(data = df, aes(x_npc = x, y_npc = y, label = text),
+                inherit.aes = FALSE)
 
-ggplot(data = mtcars, mapping = aes(wt, mpg)) +
-  geom_point() +
-  geom_text_npc(data = df, aes(x_npc = x, y_npc = y, label = text)) +
-  expand_limits(y = 40, x = 6)
+ggplot2::ggplot(data = mtcars, mapping = aes(wt, mpg)) +
+  ggplot2::geom_point() +
+  geom_text_npc(data = df, aes(x_npc = x, y_npc = y, label = text),
+                inherit.aes = FALSE) +
+  ggplot2::expand_limits(y = 40, x = 6)
 
-ggplot(data = mtcars) +
-  geom_point(mapping = aes(wt, mpg)) +
-  geom_label_npc(data = df, aes(x_npc = x, y_npc = y, label = text))
-
+ggplot2::ggplot(data = mtcars) +
+  ggplot2::geom_point(mapping = aes(wt, mpg)) +
+  geom_label_npc(data = df, aes(x_npc = x, y_npc = y, label = text),
+                 inherit.aes = FALSE)
 }
 \seealso{
 \code{\link[ggplot2]{geom_text}}

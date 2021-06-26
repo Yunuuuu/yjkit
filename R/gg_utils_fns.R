@@ -126,6 +126,9 @@ ggscale_paletteer <- function(palette = "nejm",
 #'   \code{"table"}. Details see \code{\link[ggpmisc]{annotate}}
 #' @param x,y the position of added label in Normalised Parent
 #'   Coordinates(\code{npc})
+#' @param na.rm If \code{FALSE} (the default), removes missing values with a
+#'   warning.  If \code{TRUE} silently removes missing values.
+#' @param ... Other arguments passed on to \code{\link[ggplot2]{layer}}.
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @details See \code{\link{ggplot2::annotate}}
 #' @export
@@ -253,7 +256,7 @@ gganno_text <- function(data, mapping = NULL,
       paste0('label_position must in c("title", "subtitle", "caption", "tag")')
     )
 
-    if (is.null(label_sep) && anno_statistic) label_sep <- "; "
+    if (is.null(label_sep)) label_sep <- "; "
 
     res + ggplot2::labs(
       !!label_position := stringr::str_c(names(label),
@@ -274,3 +277,26 @@ gganno_text <- function(data, mapping = NULL,
 }
 
 
+
+#' Compute npc coordinates
+#'
+#' Convert character-encoded positions to npc units and keep numeric as npc
+#' values.
+#'
+#' @param x numeric or character vector of coordinates.
+#' @return A numeric vector with values representing npc coordinates.
+valid_npc <- function(x){
+
+  if (is.factor(x)) x <- as.character(x)
+
+  if (is.character(x)) return(
+    unname(c(left = 0, center = 0.5, right = 1,
+             bottom = 0, middle = 0.5, top = 1)[x]))
+
+  if (is.numeric(x)) {
+    return(x)
+  } else {
+    return(as.numeric(x))
+  }
+
+}

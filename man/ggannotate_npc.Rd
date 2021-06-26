@@ -13,6 +13,11 @@ ggannotate_npc(geom, x, y, na.rm = FALSE, ...)
 
 \item{x, y}{the position of added label in Normalised Parent
 Coordinates(\code{npc})}
+
+\item{na.rm}{If \code{FALSE} (the default), removes missing values with a
+warning.  If \code{TRUE} silently removes missing values.}
+
+\item{...}{Other arguments passed on to \code{\link[ggplot2]{layer}}.}
 }
 \description{
 This function adds geoms to a plot with x and y mapping to Normalised Parent

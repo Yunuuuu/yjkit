@@ -45,7 +45,8 @@ numeric vector of length 2 or a character vector \code{(one of "title",
 "\code{inward}" and "\code{outward}". Inward always aligns text towards the
 center, and outward aligns it away from the center.}
 
-\item{anno_statistic}{a scalar logical, Should test statistic added in label}
+\item{anno_statistic}{a scalar logical, Should test statistic be annotated in
+the label}
 
 \item{label_sep}{see argument \code{label}. String to insert between the test
 statistic and test P-value.}
@@ -69,8 +70,8 @@ test results
 Create a ggplot2 object with annotation for group or condition test results
 }
 \examples{
-  gganno_between_test(mtcars, aes(cyl, mpg)) +
-  geom_boxplot()
+gganno_between_test(mtcars, aes(cyl, mpg)) +
+  ggplot2::geom_boxplot()
 }
 \author{
 Yun \email{yunyunpp96@outlook.com}

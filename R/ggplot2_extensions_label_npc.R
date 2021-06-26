@@ -14,10 +14,10 @@ geom_label_npc <- function(mapping = NULL, data = NULL,
                            label.size = 0.25,
                            na.rm = FALSE,
                            show.legend = NA,
-                           inherit.aes = TRUE) {
+                           inherit.aes = FALSE) {
   if (!missing(nudge_x) || !missing(nudge_y)) {
     if (!missing(position)) {
-      abort("You must specify either `position` or `nudge_x`/`nudge_y`.")
+      rlang::abort("You must specify either `position` or `nudge_x`/`nudge_y`.")
     }
 
     position <- ggplot2::position_nudge(nudge_x, nudge_y)
@@ -69,8 +69,8 @@ GeomLabelNpc <- ggplot2::ggproto(
                         label.r = grid::unit(0.15, "lines"),
                         label.size = 0.25) {
 
-    data$x_npc <- grid::valid.just(data$x_npc)
-    data$y_npc <- grid::valid.just(data$y_npc)
+    data$x_npc <- valid_npc(data$x_npc)
+    data$y_npc <- valid_npc(data$y_npc)
 
     ranges <- coord$backtransform_range(panel_params)
 
