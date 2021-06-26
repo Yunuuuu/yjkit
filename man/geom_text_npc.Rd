@@ -4,7 +4,7 @@
 \name{geom_label_npc}
 \alias{geom_label_npc}
 \alias{geom_text_npc}
-\title{Text or label put in Normalised Parent Coordinates}
+\title{ggplot2 layer for Text or label put in Normalised Parent Coordinates}
 \usage{
 geom_label_npc(
   mapping = NULL,

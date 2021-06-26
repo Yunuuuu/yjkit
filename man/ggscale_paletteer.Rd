@@ -6,17 +6,19 @@
 \usage{
 ggscale_paletteer(
   palette = "nejm",
-  scale = c("colour", "color", "fill"),
+  scale = "colour",
   type = c("discrete", "continuous", "binned"),
   direction = 1,
   ...
 )
 }
 \arguments{
-\item{palette}{Name of palette as a string. Must be in the form of
+\item{palette}{Name of palette as a string. Can be in the form of
 \code{packagename::palettename}. Details see
 \code{\href{https://emilhvitfeldt.github.io/paletteer/}{paletteer}}. for
-\code{palette} in \code{ggsci}, we will use regular expression to match.}
+\code{palette} in \code{ggsci}, we will use regular expression to match. If
+match nothing in \code{paletteer palette}.
+\code{\link[ggplot2]{scale_discrete_manual}} will be used.}
 
 \item{scale}{the aesthetic mapping the palette}
 

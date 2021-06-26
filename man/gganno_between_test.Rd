@@ -2,7 +2,7 @@
 % Please edit documentation in R/ggstat_utils_fns.R
 \name{gganno_between_test}
 \alias{gganno_between_test}
-\title{group or condition comparisons in between-subjects designs.}
+\title{Create a ggplot2 object with annotation for group or condition test results}
 \usage{
 gganno_between_test(
   data,
@@ -67,7 +67,8 @@ a ggplot2 object with annotation of group or condition comparisons
 test results
 }
 \description{
-Create a ggplot2 object with annotation for group or condition test results
+annotate group or condition comparisons in between-subjects designs in a
+ggplot2 object.
 }
 \examples{
 gganno_between_test(mtcars, aes(cyl, mpg)) +

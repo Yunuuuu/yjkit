@@ -2,7 +2,7 @@
 % Please edit documentation in R/gg_utils_fns.R
 \name{ggannotate_npc}
 \alias{ggannotate_npc}
-\title{Create an annotation layer}
+\title{Create an ggplot2 annotation layer}
 \usage{
 ggannotate_npc(geom, x = NULL, y = NULL, ..., na.rm = FALSE)
 }

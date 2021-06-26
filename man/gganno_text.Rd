@@ -2,7 +2,7 @@
 % Please edit documentation in R/gg_utils_fns.R
 \name{gganno_text}
 \alias{gganno_text}
-\title{Create an ggplot2 object with annotation}
+\title{Create an ggplot2 object with text annotation}
 \usage{
 gganno_text(
   data,

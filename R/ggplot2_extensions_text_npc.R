@@ -1,4 +1,4 @@
-#' Text or label put in Normalised Parent Coordinates
+#' ggplot2 layer for Text or label put in Normalised Parent Coordinates
 #'
 #' \code{geom_text_npc()} adds text directly to the plot.
 #' \code{geom_label_npc()} draws a rectangle behind the text, making it easier

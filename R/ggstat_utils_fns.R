@@ -1,6 +1,7 @@
-#' group or condition comparisons in between-subjects designs.
-#'
 #' Create a ggplot2 object with annotation for group or condition test results
+#'
+#' annotate group or condition comparisons in between-subjects designs in a
+#' ggplot2 object.
 #'
 #' @param data Default dataset to use for plot. If not specified, must be
 #'   supplied in each layer added to the plot.
