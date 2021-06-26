@@ -20,7 +20,7 @@ GSVA.\cr
 
 \section{Visualization Functions}{
  \code{\link{ggscale_paletteer}}:
-Sequential, diverging and qualitative colour scales from
+Sequential, diverging and qualitative colour scales palette from
 \code{paletteer}.\cr \cr \code{\link{ggannotate_npc}}: Create an ggplot2
 annotation layer.\cr \cr \code{\link{geom_label_npc}} and
 \code{\link{geom_text_npc}}: ggplot2 layer for Text or label put in
@@ -37,3 +37,6 @@ group test.\cr \cr \code{\link{stat_cor_test}}: Correlation analysis.\cr
 analysis.\cr
 }
 
+\author{
+Yun \email{yunyunpp96@outlook.com}
+}

@@ -71,7 +71,7 @@ annotate group or condition comparisons in between-subjects designs in a
 ggplot2 object.
 }
 \examples{
-gganno_between_test(mtcars, aes(cyl, mpg)) +
+gganno_between_test(mtcars, aes(factor(cyl), mpg)) +
   ggplot2::geom_boxplot()
 }
 \author{

@@ -39,7 +39,7 @@
 #'   test results
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @examples
-#' gganno_between_test(mtcars, aes(cyl, mpg)) +
+#' gganno_between_test(mtcars, aes(factor(cyl), mpg)) +
 #'   ggplot2::geom_boxplot()
 #' @export
 gganno_between_test <- function(data, mapping = aes(x, y, ...),
