@@ -24,7 +24,7 @@ This function adds geoms to a plot with x and y mapping to Normalised Parent
 Coordinates
 }
 \details{
-See \code{\link{ggplot2::annotate}}
+See \code{\link[ggplot2]{annotate}}
 }
 \author{
 Yun \email{yunyunpp96@outlook.com}

@@ -1,7 +1,7 @@
 Package: yjkit
 Type: Package
 Title: Toolkit for Yun and Jin (yjkit),
-Version: 0.1.0
+Version: 0.0.1
 Author: person("Yun", "Peng", email = yunyunpp96@outlook.com,
                role = c("aut", "cre"))
 Maintainer: Yun <yunyunpp96@outlook.com>
@@ -25,6 +25,7 @@ Imports:
 Suggests: 
   matrixStats,
   methods,
+  vctrs,
   e1071, 
   paletteer,
   preprocessCore,

@@ -43,7 +43,8 @@ ggplot2::aes
 #' @return  A Scale object that can be added to a ggplot object
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @examples
-#'   gg_scale_paletteer()
+#'   ggscale_paletteer()
+#' @export
 ggscale_paletteer <- function(palette = "nejm",
                               scale = c("colour", "color", "fill"),
                               type = c("discrete", "continuous", "binned"),
@@ -130,7 +131,7 @@ ggscale_paletteer <- function(palette = "nejm",
 #'   warning.  If \code{TRUE} silently removes missing values.
 #' @param ... Other arguments passed on to \code{\link[ggplot2]{layer}}.
 #' @author Yun \email{yunyunpp96@@outlook.com}
-#' @details See \code{\link{ggplot2::annotate}}
+#' @details See \code{\link[ggplot2]{annotate}}
 #' @export
 ggannotate_npc <- function(geom, x = NULL, y = NULL,
                            ..., na.rm = FALSE){
@@ -190,8 +191,8 @@ ggannotate_npc <- function(geom, x = NULL, y = NULL,
 #' @param format_label if \code{TRUE}, will be formatted by
 #'   \code{\link{format_num}}. Default: \code{TRUE}
 #' @param label_position the position where the label will added, can be a
-#'   numeric vector of length 2 or a character vector \code{(one of "title",
-#'   "subtitle", "caption", and "tag")} of length one.
+#'   numeric vector of length 2 or a scalar character vector \code{(one of
+#'   "title", "subtitle", "caption", and "tag")}.
 #' @param label_justification label_justification must be a element-two (or one)
 #'   character or numeric vector. Possible string values are: "left", "right",
 #'   "centre", "center", "bottom", and "top". For numeric values, 0 means left
@@ -207,8 +208,8 @@ ggannotate_npc <- function(geom, x = NULL, y = NULL,
 #' @param ... additional arguments control the \code{label}. See
 #'   \code{\link[grid]{textGrob}} and \code{\link[ggplot2]{element_text}}
 #' @return a ggplot2 object with annotation
-#' @examples
-#'   gganno_text(mtcars, label = "a", label_position = c(0.5, 0.5))
+# @examples
+#   gganno_text(mtcars, label = "a", label_position = c(0.5, 0.5))
 #' @author Yun \email{yunyunpp96@@outlook.com}
 gganno_text <- function(data, mapping = NULL,
                         label, format_label = TRUE,

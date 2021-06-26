@@ -31,8 +31,8 @@ by \code{stringr::str_c(names(label), label), collapse = label_sep, sep =
 \code{\link{format_num}}. Default: \code{TRUE}}
 
 \item{label_position}{the position where the label will added, can be a
-numeric vector of length 2 or a character vector \code{(one of "title",
-  "subtitle", "caption", and "tag")} of length one.}
+numeric vector of length 2 or a scalar character vector \code{(one of
+  "title", "subtitle", "caption", and "tag")}.}
 
 \item{label_justification}{label_justification must be a element-two (or one)
 character or numeric vector. Possible string values are: "left", "right",
@@ -57,9 +57,6 @@ a ggplot2 object with annotation
 }
 \description{
 This function Creates an ggplot2 object with annotation.
-}
-\examples{
-  gganno_text(mtcars, label = "a", label_position = c(0.5, 0.5))
 }
 \author{
 Yun \email{yunyunpp96@outlook.com}

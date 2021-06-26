@@ -169,9 +169,11 @@ stat_cor_test <- function(x, y = NULL,
 #'   summarized information corresponding to each term in the RHS of formula.
 #'   Details see \code{\link[broom:tidy.coxph]{tidy}}
 #' @examples
-#'   stat_cox_test(survival_example_data,
-#'                survival::Surv(time, status) ~ ph.ecog + tt(age)
-#'                )
+#' survival_example_data <- readRDS(system.file(
+#'   "extdata", "survival_example_data.rds", package = "yjkit"
+#' ))
+#' stat_cox_test( survival_example_data,
+#'                survival::Surv(time, status) ~ ph.ecog + tt(age) )
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @references \itemize{\item
 #'   \href{https://stats.stackexchange.com/questions/362381/logrank-p-value-for-2-groups}{logrank-p-value-for-2-groups}

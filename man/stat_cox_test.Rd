@@ -37,9 +37,11 @@ results and tidy informations. log-rank test is just a special case of the
 Cox model \code{(score test)}
 }
 \examples{
-  stat_cox_test(survival_example_data,
-               survival::Surv(time, status) ~ ph.ecog + tt(age)
-               )
+survival_example_data <- readRDS(system.file(
+  "extdata", "survival_example_data.rds", package = "yjkit"
+))
+stat_cox_test( survival_example_data,
+               survival::Surv(time, status) ~ ph.ecog + tt(age) )
 }
 \references{
 \itemize{\item

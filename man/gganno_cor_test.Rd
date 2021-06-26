@@ -58,8 +58,8 @@ if there are at least 4 complete pairs of observations.}
 \code{\link{format_num}}. Default: \code{TRUE}}
 
 \item{label_position}{the position where the label will added, can be a
-numeric vector of length 2 or a character vector \code{(one of "title",
-  "subtitle", "caption", and "tag")} of length one.}
+numeric vector of length 2 or a scalar character vector \code{(one of
+  "title", "subtitle", "caption", and "tag")}.}
 
 \item{label_justification}{These can either be a number between 0
 (\code{right/bottom}) and 1 (\code{top/left}) or a character

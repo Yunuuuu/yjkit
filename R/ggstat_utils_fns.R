@@ -14,8 +14,8 @@
 #' @param format_label if \code{TRUE}, will be formatted by
 #'   \code{\link{format_num}}. Default: \code{TRUE}
 #' @param label_position the position where the label will added, can be a
-#'   numeric vector of length 2 or a character vector \code{(one of "title",
-#'   "subtitle", "caption", and "tag")} of length one.
+#'   numeric vector of length 2 or a scalar character vector \code{(one of
+#'   "title", "subtitle", "caption", and "tag")}.
 #' @param label_justification These can either be a number between 0
 #'   (\code{right/bottom}) and 1 (\code{top/left}) or a character
 #'   ("\code{left}", "\code{middle}", "\code{right}", "\code{bottom}",
@@ -111,8 +111,8 @@ gganno_between_test <- function(data, mapping = aes(x, y, ...),
 #' @param format_label if \code{TRUE}, will be formatted by
 #'   \code{\link{format_num}}. Default: \code{TRUE}
 #' @param label_position the position where the label will added, can be a
-#'   numeric vector of length 2 or a character vector \code{(one of "title",
-#'   "subtitle", "caption", and "tag")} of length one.
+#'   numeric vector of length 2 or a scalar character vector \code{(one of
+#'   "title", "subtitle", "caption", and "tag")}.
 #' @param label_justification These can either be a number between 0
 #'   (\code{right/bottom}) and 1 (\code{top/left}) or a character
 #'   ("\code{left}", "\code{middle}", "\code{right}", "\code{bottom}",
