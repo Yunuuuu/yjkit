@@ -30,18 +30,18 @@ ggplot2::aes
 #'   \code{\href{https://emilhvitfeldt.github.io/paletteer/}{paletteer}}. for
 #'   \code{palette} in \code{ggsci}, we will use regular expression to match. If
 #'   match nothing in \code{paletteer palette}.
-#'   \code{\link[ggplot2]{scale_discrete_manual}} will be used.
+#'   \code{\link[ggplot2:scale_manual]{scale_discrete_manual}} will be used.
 #' @param scale the aesthetic mapping the palette
 #' @param type the type of scale, a scalar character, can be "\code{discrete}",
 #'   "\code{continuous}", and "\code{binned}". Default: "\code{discrete}"
 #' @param direction Sets the order of colours in the scale. If 1, the default,
 #'   colours are as output by
-#'   \code{\link[paletteer:scale_color_paletteer_c]{paletteer}}. If -1, the
+#'   \code{\link[paletteer:ggplot2-scales-continuous]{paletteer}}. If -1, the
 #'   order of colours is reversed. Default: \code{1}.
 #' @param ... Additional arguments pass on to
 #'   \code{\link[ggplot2:discrete_scale]{discrete scale}},
-#'   \code{\link[ggplot2:scale_colour_gradientn]{gradient continuous scale}} or
-#'   \code{\link[ggplot2:scale_colour_stepsn]{stepsn scale}}.
+#'   \code{\link[ggplot2:scale_gradient]{gradient continuous scale}} or
+#'   \code{\link[ggplot2:scale_steps]{stepsn scale}}.
 #' @return  A Scale object that can be added to a ggplot object
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @examples
@@ -224,8 +224,7 @@ ggannotate_npc <- function(geom, x = NULL, y = NULL,
 #' @param label_justification label_justification must be a element-two (or one)
 #'   character or numeric vector. Possible string values are: "left", "right",
 #'   "centre", "center", "bottom", and "top". For numeric values, 0 means left
-#'   (bottom) alignment and 1 means right (top) alignment. Details see
-#'   \code{\link[grid]{valid.just}}. Default: for numeric \code{label_position},
+#'   (bottom) alignment and 1 means right (top) alignment. Default: for numeric \code{label_position},
 #'   default \code{label_justification} is \code{c(0, 1.15)}, for character
 #'   \code{label_position}, default \code{label_justification} is \code{c(0, 0)}
 #' @param label_sep see argument \code{label}. String to insert between each of
@@ -234,7 +233,7 @@ ggannotate_npc <- function(geom, x = NULL, y = NULL,
 #'   a function (can be a function name as a string) implemented as a ggplot2
 #'   theme object.
 #' @param ... additional arguments control the \code{label}. See
-#'   \code{\link[grid]{textGrob}} and \code{\link[ggplot2]{element_text}}
+#'   \code{\link[grid]{grid.text}} and \code{\link[ggplot2]{element}}
 #' @return a ggplot2 object with annotation
 # @examples
 #   gganno_text(mtcars, label = "a", label_position = c(0.5, 0.5))

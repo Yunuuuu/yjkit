@@ -31,7 +31,8 @@
 #'   a function (can be a function name as a string) implemented as a ggplot2
 #'   theme object.
 #' @param anno_args additional arguments control the \code{label}. See
-#'   \code{\link[grid]{textGrob}} and \code{\link[ggplot2]{element_text}}
+#'   \code{\link[grid:grid.text]{textGrob}} and
+#'   \code{\link[ggplot2:element]{element_text}}
 #' @param ... other arguments passed to statistical test function,
 #'   \code{\link[stats]{wilcox.test}}, \code{\link[stats]{kruskal.test}},
 #'   \code{\link[stats]{t.test}} and \code{\link[stats]{aov}}
@@ -127,7 +128,8 @@ gganno_between_test <- function(data, mapping = aes(x, y, ...),
 #'   a function (can be a function name as a string) implemented as a ggplot2
 #'   theme object.
 #' @param anno_args additional arguments control the \code{label}. See
-#'   \code{\link[grid]{textGrob}} and \code{\link[ggplot2]{element_text}}
+#'   \code{\link[grid:grid.text]{textGrob}} and
+#'   \code{\link[ggplot2:element]{element_text}}
 #' @param ... Other parameters for \code{\link[stats]{cor.test}}
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @examples

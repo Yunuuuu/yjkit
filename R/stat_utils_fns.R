@@ -15,18 +15,18 @@
 #'   \code{\link[stats]{wilcox.test}}, \code{\link[stats]{kruskal.test}},
 #'   \code{\link[stats]{t.test}} and \code{\link[stats]{aov}}
 #' @section Quasiquotation:
-#'
-#' \code{x} and \code{y} in \code{stat_between_test()} are
-#' \code{\link[rlang:quotation]{quoted arguments}} This means that its inputs
-#' are quoted to be evaluated in the context of the data. This makes it easy to
-#' work with variables from the data frame because you can name those directly.
-#' The flip side is that you have to use \code{\link[rlang]{quasiquotation}} to
-#' program with \code{stat_between_test()}. See a tidy evaluation tutorial such
-#' as the \href{https://dplyr.tidyverse.org/articles/programming.html}{dplyr
-#' programming vignette} to learn more about these techniques.
+#'   \code{x} and \code{y} in \code{stat_between_test()}
+#'   are \code{\link[rlang:nse-defuse]{quoted arguments}} This means that its
+#'   inputs are quoted to be evaluated in the context of the data. This makes it
+#'   easy to work with variables from the data frame because you can name those
+#'   directly. The flip side is that you have to use
+#'   \code{\link[rlang:nse-force]{quasiquotation}} to program with
+#'   \code{stat_between_test()}. See a tidy evaluation tutorial such as the
+#'   \href{https://dplyr.tidyverse.org/articles/programming.html}{dplyr
+#'   programming vignette} to learn more about these techniques.
 #'
 #' @return a tibble of the test results where each row match each pair of x and
-#'   y. (see \code{\link[broom]{tidy}})
+#'   y. (see \code{\link[generics:tidy]{tidy}})
 #' @details if \code{type = "nonparametric"}, \code{\link[stats]{wilcox.test}}
 #'   or \code{\link[stats]{kruskal.test}} is used. \cr if \code{type =
 #'   "parametric"}, \code{\link[stats]{t.test}} or \code{\link[stats]{aov}} is

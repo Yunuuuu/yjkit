@@ -5,18 +5,19 @@
 #' scores using the ssGSEA projection methodology. According to GenePattern
 #' (modified) and GSVA
 #'
-#' @param data_set gene expression data, can be \code{ExpressionSet} object,
+#' @param data_set
+#'   gene expression data, can be \code{ExpressionSet} object,
 #'   \code{SummarizedExperiment}, or \code{matrix} object. when data_set is a
 #'   \code{SummarizedExperiment} object, the \code{assay} argument will be used
 #'   to extracted the assay with exression matrix (see
-#'   \code{\link[SummarizedExperiment]{SummarizedExperiment}}), if missing
-#'   \code{assay}, the first \code{assay} will be used. For ssGSEA, normalizd
-#'   exression values with gene length adjusted were needed.
+#'   \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{SummarizedExperiment}}),
+#'    if missing \code{assay}, the first \code{assay} will be used. For ssGSEA,
+#'   normalizd exression values with gene length adjusted were needed.
 #' @param gene_set_list gene sets can be provided as \code{GeneSetCollection}
 #'   object or \code{list} object
 #' @param assay used to extracted the assay with exression matrix (see
-#'   \code{\link[SummarizedExperiment]{SummarizedExperiment}}), if missing
-#'   \code{assay}, the first \code{assay} will be used.
+#'   \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{SummarizedExperiment}}),
+#'    if missing \code{assay}, the first \code{assay} will be used.
 #' @param NES whether to calculate normalized enrichment scores
 #' @param num_perm the number of permutations to calculate NES
 #' @param gene_set_selection  list of gene set names on which to project the
@@ -34,9 +35,9 @@
 #' @param min_overlap min overlap required between genes in gene set and genes
 #'   in input (feature dataset) file in order to include that gene set in data
 #'   set projection
-#' @param BPPARAM see \code{\link[BiocParallel]{bpparam}}. Default: \code{NULL}
-#'   means \code{\cr switch (Sys.info()[["sysname"]], \cr Linux =
-#'   BiocParallel::MulticoreParam(), \cr Windows = BiocParallel::SnowParam()) }
+#' @param BPPARAM see \code{\link[BiocParallel:register]{bpparam}}. Default:
+#'   \code{NULL} means \code{\cr switch (Sys.info()[["sysname"]], \cr Linux =
+#'   BiocParallel::MulticoreParam(), \cr Windows = BiocParallel::SnowParam())}
 #' @param verbose	if TRUE, print extra infos. Default: \code{TRUE}
 #' @return a \code{list} or \code{ExpressionSet} or \code{SummarizedExperiment}
 #'   object of projection results for each gene set and each sample based on

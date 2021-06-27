@@ -78,7 +78,8 @@ a function (can be a function name as a string) implemented as a ggplot2
 theme object.}
 
 \item{anno_args}{additional arguments control the \code{label}. See
-\code{\link[grid]{textGrob}} and \code{\link[ggplot2]{element_text}}}
+\code{\link[grid:grid.text]{textGrob}} and
+\code{\link[ggplot2:element]{element_text}}}
 
 \item{...}{Other parameters for \code{\link[stats]{cor.test}}}
 }

@@ -18,7 +18,7 @@ ggscale_paletteer(
 \code{\href{https://emilhvitfeldt.github.io/paletteer/}{paletteer}}. for
 \code{palette} in \code{ggsci}, we will use regular expression to match. If
 match nothing in \code{paletteer palette}.
-\code{\link[ggplot2]{scale_discrete_manual}} will be used.}
+\code{\link[ggplot2:scale_manual]{scale_discrete_manual}} will be used.}
 
 \item{scale}{the aesthetic mapping the palette}
 
@@ -27,13 +27,13 @@ match nothing in \code{paletteer palette}.
 
 \item{direction}{Sets the order of colours in the scale. If 1, the default,
 colours are as output by
-\code{\link[paletteer:scale_color_paletteer_c]{paletteer}}. If -1, the
+\code{\link[paletteer:ggplot2-scales-continuous]{paletteer}}. If -1, the
 order of colours is reversed. Default: \code{1}.}
 
 \item{...}{Additional arguments pass on to
 \code{\link[ggplot2:discrete_scale]{discrete scale}},
-\code{\link[ggplot2:scale_colour_gradientn]{gradient continuous scale}} or
-\code{\link[ggplot2:scale_colour_stepsn]{stepsn scale}}.}
+\code{\link[ggplot2:scale_gradient]{gradient continuous scale}} or
+\code{\link[ggplot2:scale_steps]{stepsn scale}}.}
 }
 \value{
 A Scale object that can be added to a ggplot object

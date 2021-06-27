@@ -62,9 +62,9 @@
 #'   helpful when program stop unexpectedly when \code{clean.temp} is
 #'   \code{FALSE}. Default: \code{FALSE}
 #' @param verbose if \code{TRUE}, print extra info. Default: \code{FALSE}
-#' @param BPPARAM see \code{\link[BiocParallel]{bpparam}}. Default: \code{NULL}
-#'   means \cr \code{switch (Sys.info()[["sysname"]],} \cr \code{Linux =
-#'   BiocParallel::MulticoreParam(),} \cr \code{Windows =
+#' @param BPPARAM see \code{\link[BiocParallel:register]{bpparam}}. Default:
+#'   \code{NULL} means \cr \code{switch (Sys.info()[["sysname"]],} \cr
+#'   \code{Linux = BiocParallel::MulticoreParam(),} \cr \code{Windows =
 #'   BiocParallel::SnowParam()) }
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @return All reviewed results (see

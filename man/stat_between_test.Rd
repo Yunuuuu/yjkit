@@ -24,7 +24,7 @@ unique values of \code{x} in \code{data}}
 }
 \value{
 a tibble of the test results where each row match each pair of x and
-y. (see \code{\link[broom]{tidy}})
+y. (see \code{\link[generics:tidy]{tidy}})
 }
 \description{
 Function to calculate statistics and P-value for both parametric and
@@ -39,14 +39,14 @@ in \code{data}
 }
 \section{Quasiquotation}{
 
-
-\code{x} and \code{y} in \code{stat_between_test()} are
-\code{\link[rlang:quotation]{quoted arguments}} This means that its inputs
-are quoted to be evaluated in the context of the data. This makes it easy to
-work with variables from the data frame because you can name those directly.
-The flip side is that you have to use \code{\link[rlang]{quasiquotation}} to
-program with \code{stat_between_test()}. See a tidy evaluation tutorial such
-as the \href{https://dplyr.tidyverse.org/articles/programming.html}{dplyr
+\code{x} and \code{y} in \code{stat_between_test()}
+are \code{\link[rlang:nse-defuse]{quoted arguments}} This means that its
+inputs are quoted to be evaluated in the context of the data. This makes it
+easy to work with variables from the data frame because you can name those
+directly. The flip side is that you have to use
+\code{\link[rlang:nse-force]{quasiquotation}} to program with
+\code{stat_between_test()}. See a tidy evaluation tutorial such as the
+\href{https://dplyr.tidyverse.org/articles/programming.html}{dplyr
 programming vignette} to learn more about these techniques.
 }
 

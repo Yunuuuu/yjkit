@@ -1,10 +1,11 @@
 #' Caculate Chromosome-arm-levels copy number variation
 #'
 #' @param seg_cnv is a GenomicRanges obeject with interger values of CNV column
-#'   in \code{\link[S4Vectors]{mcols}(seg_cnv)[[cnv_col]]} (absolute segment
-#'   copy number determined by ABSOLUTE algorithm or relative segment copy
-#'   number defined with -1 meaning del, 0 meaning neutral and 1 meaning amp)
-#'   and samples ID in \code{\link[S4Vectors]{mcols}(seg_cnv)[[sample_id_col]]}
+#'   in \code{\link[S4Vectors:Vector-class]{mcols}(seg_cnv)[[cnv_col]]}
+#'   (absolute segment copy number determined by ABSOLUTE algorithm or relative
+#'   segment copy number defined with -1 meaning del, 0 meaning neutral and 1
+#'   meaning amp) and samples ID in
+#'   \code{\link[S4Vectors:Vector-class]{mcols}(seg_cnv)[[sample_id_col]]}
 #' @param cnv_col a scalar character gives the column containing CNV
 #' @param sample_id_col a scalar character gives the column containing sample ID
 #' @param ref_cytoband is a GenomicRanges obeject containing the Cytoband

@@ -37,8 +37,7 @@ numeric vector of length 2 or a scalar character vector \code{(one of
 \item{label_justification}{label_justification must be a element-two (or one)
 character or numeric vector. Possible string values are: "left", "right",
 "centre", "center", "bottom", and "top". For numeric values, 0 means left
-(bottom) alignment and 1 means right (top) alignment. Details see
-\code{\link[grid]{valid.just}}. Default: for numeric \code{label_position},
+(bottom) alignment and 1 means right (top) alignment. Default: for numeric \code{label_position},
 default \code{label_justification} is \code{c(0, 1.15)}, for character
 \code{label_position}, default \code{label_justification} is \code{c(0, 0)}}
 
@@ -50,7 +49,7 @@ a function (can be a function name as a string) implemented as a ggplot2
 theme object.}
 
 \item{...}{additional arguments control the \code{label}. See
-\code{\link[grid]{textGrob}} and \code{\link[ggplot2]{element_text}}}
+\code{\link[grid]{grid.text}} and \code{\link[ggplot2]{element}}}
 }
 \value{
 a ggplot2 object with annotation

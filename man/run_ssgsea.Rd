@@ -25,16 +25,16 @@ run_ssgsea(
 \code{SummarizedExperiment}, or \code{matrix} object. when data_set is a
 \code{SummarizedExperiment} object, the \code{assay} argument will be used
 to extracted the assay with exression matrix (see
-\code{\link[SummarizedExperiment]{SummarizedExperiment}}), if missing
-\code{assay}, the first \code{assay} will be used. For ssGSEA, normalizd
-exression values with gene length adjusted were needed.}
+\code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{SummarizedExperiment}}),
+if missing \code{assay}, the first \code{assay} will be used. For ssGSEA,
+normalizd exression values with gene length adjusted were needed.}
 
 \item{gene_set_list}{gene sets can be provided as \code{GeneSetCollection}
 object or \code{list} object}
 
 \item{assay}{used to extracted the assay with exression matrix (see
-\code{\link[SummarizedExperiment]{SummarizedExperiment}}), if missing
-\code{assay}, the first \code{assay} will be used.}
+\code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{SummarizedExperiment}}),
+if missing \code{assay}, the first \code{assay} will be used.}
 
 \item{NES}{whether to calculate normalized enrichment scores}
 
@@ -61,9 +61,9 @@ default. (Default: \code{0.75})}
 in input (feature dataset) file in order to include that gene set in data
 set projection}
 
-\item{BPPARAM}{see \code{\link[BiocParallel]{bpparam}}. Default: \code{NULL}
-means \code{\cr switch (Sys.info()[["sysname"]], \cr Linux =
-  BiocParallel::MulticoreParam(), \cr Windows = BiocParallel::SnowParam()) }}
+\item{BPPARAM}{see \code{\link[BiocParallel:register]{bpparam}}. Default:
+\code{NULL} means \code{\cr switch (Sys.info()[["sysname"]], \cr Linux =
+  BiocParallel::MulticoreParam(), \cr Windows = BiocParallel::SnowParam())}}
 
 \item{verbose}{if TRUE, print extra infos. Default: \code{TRUE}}
 }

@@ -87,9 +87,9 @@ helpful when program stop unexpectedly when \code{clean.temp} is
 
 \item{verbose}{if \code{TRUE}, print extra info. Default: \code{FALSE}}
 
-\item{BPPARAM}{see \code{\link[BiocParallel]{bpparam}}. Default: \code{NULL}
-means \cr \code{switch (Sys.info()[["sysname"]],} \cr \code{Linux =
-  BiocParallel::MulticoreParam(),} \cr \code{Windows =
+\item{BPPARAM}{see \code{\link[BiocParallel:register]{bpparam}}. Default:
+\code{NULL} means \cr \code{switch (Sys.info()[["sysname"]],} \cr
+\code{Linux = BiocParallel::MulticoreParam(),} \cr \code{Windows =
   BiocParallel::SnowParam()) }}
 }
 \value{
