@@ -1,4 +1,4 @@
-#' yjkit: A toolkit package for Yun and Jin
+#' yjtools: A toolkit package for Yun and Jin
 #'
 #' @description A miscellaneous toolkit including analysis algorithm,
 #'   visualization tools and other utility functions
@@ -24,5 +24,5 @@
 #'   analysis.\cr
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @docType package
-#' @name yjkit
+#' @name yjtools
 NULL

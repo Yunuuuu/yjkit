@@ -1,6 +1,6 @@
-Package: yjkit
+Package: yjtools
 Type: Package
-Title: Toolkit for Yun and Jin (yjkit),
+Title: Toolkit for Yun and Jin (yjtools),
 Version: 0.0.1
 Author: person("Yun", "Peng", email = yunyunpp96@outlook.com,
                role = c("aut", "cre"))
