@@ -223,7 +223,7 @@ tcga_get_cli_xml <- function(project, path = here::here("rawdata", "GDCdata")) {
       bcr_patient_barcode,
       sample_barcode,
       sample_vial_barcode,
-      everything()
+      dplyr::everything()
     )
 }
 

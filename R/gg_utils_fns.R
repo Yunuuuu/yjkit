@@ -27,7 +27,7 @@ ggplot2::aes
 #'   \code{\link[paletteer]{paletteer-package}}
 #' @param palette Name of palette as a string. Can be in the form of
 #'   \code{packagename::palettename}. Details see
-#'   \code{\href{https://emilhvitfeldt.github.io/paletteer/}{paletteer}}. for
+#'   \href{https://emilhvitfeldt.github.io/paletteer/}{\code{paletteer}}. for
 #'   \code{palette} in \code{ggsci}, we will use regular expression to match. If
 #'   match nothing in \code{paletteer palette}.
 #'   \code{\link[ggplot2:scale_manual]{scale_discrete_manual}} will be used.
@@ -86,10 +86,10 @@ ggscale_paletteer <- function(palette = "nejm",
 
   if (rlang::is_scalar_character(palette)) {
 
-    palette_fn <- rlang::eval_tidy( rlang::expr(
-      `::`(paletteer, !!rlang::sym(
+    palette_fn <- rlang::eval_tidy( rlang::call2(
+      "::", rlang::expr(paletteer), rlang::sym(
         stringr::str_c("scale_", scale, "_paletteer_", type)
-      ))
+      )
     ) )
 
     all_paletteer_palette <- stringr::str_c(
@@ -186,7 +186,7 @@ ggannotate_npc <- function(geom, x = NULL, y = NULL,
     bad <- lengths != 1L
     details <- paste(names(aesthetics)[bad], " (", lengths[bad], ")",
                      sep = "", collapse = ", ")
-    rlang::abort(glue("Unequal parameter lengths: {details}"))
+    rlang::abort(glue::glue("Unequal parameter lengths: {details}"))
   }
 
   data <- vctrs::new_data_frame(position, n = n)

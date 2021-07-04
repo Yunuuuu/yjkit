@@ -15,7 +15,7 @@ ggscale_paletteer(
 \arguments{
 \item{palette}{Name of palette as a string. Can be in the form of
 \code{packagename::palettename}. Details see
-\code{\href{https://emilhvitfeldt.github.io/paletteer/}{paletteer}}. for
+\href{https://emilhvitfeldt.github.io/paletteer/}{\code{paletteer}}. for
 \code{palette} in \code{ggsci}, we will use regular expression to match. If
 match nothing in \code{paletteer palette}.
 \code{\link[ggplot2:scale_manual]{scale_discrete_manual}} will be used.}

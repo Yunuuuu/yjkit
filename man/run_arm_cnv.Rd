@@ -34,17 +34,17 @@ provided a self-defined GenomicRanges obeject. Default: "hg38"}
 \item{filter_centromere}{Whether to include or exclude segments across
 centromere. Default: \code{TRUE}}
 
-\item{cnv_mode}{is a scala character with values in "rel" and "abs"
-correspongding to what Shukla, A and Cohen-Sharir have presented
-respectively}
+\item{cnv_mode}{is a scala character with values in \code{"rel"} and
+\code{"abs"} correspongding to what Shukla, A and Cohen-Sharir have
+presented respectively}
 
 \item{ploidy}{the ploidy for the comparison to define Chromosome arm-level
-aneuploidy profiling. Cohen-Sharir uses background ploidy (\code{cnv_mode
-  \strong{abs}})}
+aneuploidy profiling. Cohen-Sharir uses background ploidy (\code{cnv_mode}:
+"\code{abs}")}
 
 \item{threshold}{the fraction to define Chromosome arm-level aneuploidy
-profiling,  Cohen-Sharir uses 0.9 as the cut-off. (\code{cnv_mode
-  \strong{rel}})}
+profiling,  Cohen-Sharir uses 0.9 as the cut-off. (\code{cnv_mode}:
+"\code{rel}")}
 }
 \value{
 a tibble containing Chromosome-arm-levels (CNV)

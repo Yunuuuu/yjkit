@@ -10,9 +10,7 @@ testthat::test_that(
       run_absolute(
         seg = seg, maf = maf,
         results_dir = file.path(tempdir(),"results", "ABSOLUTE"),
-        BPPARAM = BiocParallel::SnowParam(
-          BiocParallel::snowWorkers()
-        )
+        BPPARAM = BiocParallel::SerialParam()
       ),
       "-> Done.", fixed = TRUE
     )

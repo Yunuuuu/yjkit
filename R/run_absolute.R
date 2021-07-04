@@ -94,7 +94,7 @@
 #' @references Carter, S., Cibulskis, K., Helman, E. et al. Absolute
 #'   quantification of somatic DNA alterations in human cancer. Nat Biotechnol
 #'   30, 413–421 (2012). \url{https://doi.org/10.1038/nbt.2203}
-#' @importFrom data.table :=
+#' @import data.table
 #' @export
 run_absolute <- function(
   seg, maf = NULL, sigma_p = 0, max_sigma_h = 0.015, min_ploidy = 0.95,

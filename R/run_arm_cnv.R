@@ -13,15 +13,15 @@
 #'   provided a self-defined GenomicRanges obeject. Default: "hg38"
 #' @param filter_centromere Whether to include or exclude segments across
 #' centromere. Default: \code{TRUE}
-#' @param cnv_mode is a scala character with values in "rel" and "abs"
-#'   correspongding to what Shukla, A and Cohen-Sharir have presented
-#'   respectively
+#' @param cnv_mode is a scala character with values in \code{"rel"} and
+#'   \code{"abs"} correspongding to what Shukla, A and Cohen-Sharir have
+#'   presented respectively
 #' @param threshold the fraction to define Chromosome arm-level aneuploidy
-#'   profiling,  Cohen-Sharir uses 0.9 as the cut-off. (\code{cnv_mode
-#'   \strong{rel}})
+#'   profiling,  Cohen-Sharir uses 0.9 as the cut-off. (\code{cnv_mode}:
+#'   "\code{rel}")
 #' @param ploidy the ploidy for the comparison to define Chromosome arm-level
-#'   aneuploidy profiling. Cohen-Sharir uses background ploidy (\code{cnv_mode
-#'   \strong{abs}})
+#'   aneuploidy profiling. Cohen-Sharir uses background ploidy (\code{cnv_mode}:
+#'   "\code{abs}")
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @return a tibble containing Chromosome-arm-levels (CNV)
 #' @references  \itemize{\item   Cohen-Sharir, Y., McFarland, J.M., Abdusamad,

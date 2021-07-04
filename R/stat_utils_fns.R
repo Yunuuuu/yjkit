@@ -209,8 +209,8 @@ stat_cox_test <- function(data, formula,
 # stat_between_test utility function --------------------------------------
 
 stat_between_test_helper <- function(data, x, y, x_label = NULL, y_label = NULL,
-                                   type = c("nonparametric", "parametric"),
-                                   ...){
+                                     type = c("nonparametric", "parametric"),
+                                     ...){
 
   stopifnot(inherits(data, "data.frame"))
   type <- match.arg(type)
@@ -245,10 +245,14 @@ stat_between_test_helper <- function(data, x, y, x_label = NULL, y_label = NULL,
 
   }
 
-  test_res <- rlang::expr(
-    `::`(stats, !!rlang::sym(test_method))(..y ~ ..x, data = test_data,
-                                           !!!arg_dots)
+  test_fn <- rlang::call2(
+    "::", rlang::expr(stats), rlang::sym(test_method)
   )
+
+  test_res <- rlang::expr(
+    (!!test_fn)(..y ~ ..x, data = test_data, !!!arg_dots)
+  )
+
   test_res <- broom::tidy( rlang::eval_tidy(test_res) )
 
   if (test_method == "aov") {

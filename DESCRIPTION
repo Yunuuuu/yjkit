@@ -23,6 +23,7 @@ Imports:
   tidyr,
   data.table
 Suggests: 
+  glue,
   matrixStats,
   methods,
   vctrs,

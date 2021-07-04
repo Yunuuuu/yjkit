@@ -1,4 +1,3 @@
-
 #' Single-sample GSEA
 #'
 #' Project each sample within a data set onto a space of gene set enrichment
@@ -36,8 +35,9 @@
 #'   in input (feature dataset) file in order to include that gene set in data
 #'   set projection
 #' @param BPPARAM see \code{\link[BiocParallel:register]{bpparam}}. Default:
-#'   \code{NULL} means \code{\cr switch (Sys.info()[["sysname"]], \cr Linux =
-#'   BiocParallel::MulticoreParam(), \cr Windows = BiocParallel::SnowParam())}
+#'   \code{NULL} means \cr \code{switch (Sys.info()[["sysname"]],} \cr
+#'   \code{Linux = BiocParallel::MulticoreParam(),} \cr \code{Windows =
+#'   BiocParallel::SnowParam())}
 #' @param verbose	if TRUE, print extra infos. Default: \code{TRUE}
 #' @return a \code{list} or \code{ExpressionSet} or \code{SummarizedExperiment}
 #'   object of projection results for each gene set and each sample based on

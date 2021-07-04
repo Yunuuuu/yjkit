@@ -1,4 +1,4 @@
 library(testthat)
-library(yjkit)
+library(yjtools)
 
-test_check("yjkit")
+test_check("yjtools")
