@@ -1,10 +1,10 @@
 testthat::test_that(
   "test run_absolute()", {
     seg <- readRDS(system.file("extdata", "run_absolute_example_seg.rds",
-                               package = "yjkit"))
+                               package = "yjtools"))
 
     maf <- readRDS(system.file("extdata", "run_absolute_example_maf.rds",
-                               package = "yjkit"))
+                               package = "yjtools"))
 
     testthat::expect_output(
       run_absolute(

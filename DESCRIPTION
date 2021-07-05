@@ -21,6 +21,7 @@ Imports:
   broom,
   purrr,
   tidyr,
+  tidyselect,
   data.table
 Suggests: 
   glue,

@@ -80,11 +80,11 @@
 #' @examples
 #' \donttest{
 #' seg <- readRDS(
-#' system.file("extdata", "run_absolute_example_seg.rds", package = "yjkit")
+#' system.file("extdata", "run_absolute_example_seg.rds", package = "yjtools")
 #' )
 #'
 #' maf <- readRDS(
-#' system.file("extdata", "run_absolute_example_maf.rds", package = "yjkit")
+#' system.file("extdata", "run_absolute_example_maf.rds", package = "yjtools")
 #' )
 #'
 #' run_absolute(seg = seg, maf = maf,

@@ -41,7 +41,7 @@ testthat::test_that(
   "test stat_cox_test()", {
 
     survival_example_data <- readRDS(
-      system.file("extdata", "survival_example_data.rds", package = "yjkit")
+      system.file("extdata", "survival_example_data.rds", package = "yjtools")
     )
     testthat::expect_snapshot_value(
       stat_cox_test(survival_example_data,

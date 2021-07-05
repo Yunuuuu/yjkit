@@ -5,7 +5,7 @@ testthat::test_that(
       run_cibersort(
         readRDS(
           system.file("extdata", "run_cibersort_example_mixture_data.rds",
-                      package = "yjkit")
+                      package = "yjtools")
         ),
         quantile_norm = TRUE, perm = 50,
         absolute = FALSE,

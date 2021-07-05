@@ -38,7 +38,7 @@ Cox model \code{(score test)}
 }
 \examples{
 survival_example_data <- readRDS(system.file(
-  "extdata", "survival_example_data.rds", package = "yjkit"
+  "extdata", "survival_example_data.rds", package = "yjtools"
 ))
 stat_cox_test( survival_example_data,
                survival::Surv(time, status) ~ ph.ecog + tt(age) )
