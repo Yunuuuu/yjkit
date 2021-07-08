@@ -66,7 +66,7 @@ allelic. total is what this code for. Default: \code{"total"}}
 \item{min_mut_af}{Minimum mutation allelic fraction. Mutations with lower
 allelic fractions will be filtered out before analysis. Default: \code{0.1}}
 
-\item{BPPARAM}{Default: \code{\link[BiocParallel:bpparam]{bpparam()}}. \cr
+\item{BPPARAM}{Default: \code{\link[BiocParallel:register]{bpparam()}}. \cr
 \code{NULL} means \code{switch (Sys.info()[["sysname"]],} \cr
 \code{Darwin = ,} \cr \code{Linux = BiocParallel::MulticoreParam(),} \cr
 \code{Windows = BiocParallel::SnowParam()) }}
@@ -74,12 +74,14 @@ allelic fractions will be filtered out before analysis. Default: \code{0.1}}
 \item{verbose}{if \code{TRUE}, print extra info. Default: \code{FALSE}}
 }
 \value{
-Side effect. All ABSOLUTE called results (see
+Side effect. \cr \cr All ABSOLUTE called results (see
 \code{\link[ABSOLUTE]{RunAbsolute}}) were kept in directory
-\code{file.path(results_dir, "RunAbsolute")}, all summarized multiple
-ABSOLUTE results (see \code{\link[ABSOLUTE]{CreateReviewObject}}) were kept
-in \code{file.path(results_dir, "CreateReviewObject")}, and all reviewed
-results were kept in \code{ file.path(results_dir, "reviewed")}
+\code{file.path(results_dir, "RunAbsolute")}. \cr \cr All summarized
+results from multiple ABSOLUTE calling (see
+\code{\link[ABSOLUTE]{CreateReviewObject}}) were kept in
+\code{file.path(results_dir, "CreateReviewObject")}. \cr \cr All reviewed
+results (see \code{\link[ABSOLUTE]{ExtractReviewedResults}}) were kept in
+\code{ file.path(results_dir, "reviewed")}
 }
 \description{
 This function is based on package

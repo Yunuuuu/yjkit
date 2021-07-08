@@ -23,7 +23,7 @@ segment copy number defined with -1 meaning del, 0 meaning neutral and 1
 meaning amp) and samples ID in
 \code{\link[S4Vectors:Vector-class]{mcols}(seg_cnv)[[sample_id_col]]}}
 
-\item{cnv_col}{a scalar character gives the column containing CNV}
+\item{cnv_col}{a scalar character gives the column containing CNV values.}
 
 \item{sample_id_col}{a scalar character gives the column containing sample ID}
 
@@ -40,7 +40,7 @@ presented respectively}
 
 \item{ploidy}{the ploidy for the comparison to define Chromosome arm-level
 aneuploidy profiling. Cohen-Sharir uses background ploidy (\code{cnv_mode}:
-"\code{abs}")}
+"\code{abs}") derived from \code{\link[=run_absolute]{ABSOLUTE}} algorithm.}
 
 \item{threshold}{the fraction to define Chromosome arm-level aneuploidy
 profiling,  Cohen-Sharir uses 0.9 as the cut-off. (\code{cnv_mode}:

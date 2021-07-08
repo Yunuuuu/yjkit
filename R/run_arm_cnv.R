@@ -6,13 +6,13 @@
 #'   segment copy number defined with -1 meaning del, 0 meaning neutral and 1
 #'   meaning amp) and samples ID in
 #'   \code{\link[S4Vectors:Vector-class]{mcols}(seg_cnv)[[sample_id_col]]}
-#' @param cnv_col a scalar character gives the column containing CNV
+#' @param cnv_col a scalar character gives the column containing CNV values.
 #' @param sample_id_col a scalar character gives the column containing sample ID
 #' @param ref_cytoband is a GenomicRanges obeject containing the Cytoband
 #'   reference, It can be a scalar character "hg19" or "hg38", or you can
 #'   provided a self-defined GenomicRanges obeject. Default: "hg38"
 #' @param filter_centromere Whether to include or exclude segments across
-#' centromere. Default: \code{TRUE}
+#'   centromere. Default: \code{TRUE}
 #' @param cnv_mode is a scala character with values in \code{"rel"} and
 #'   \code{"abs"} correspongding to what Shukla, A and Cohen-Sharir have
 #'   presented respectively
@@ -21,7 +21,7 @@
 #'   "\code{rel}")
 #' @param ploidy the ploidy for the comparison to define Chromosome arm-level
 #'   aneuploidy profiling. Cohen-Sharir uses background ploidy (\code{cnv_mode}:
-#'   "\code{abs}")
+#'   "\code{abs}") derived from \code{\link[=run_absolute]{ABSOLUTE}} algorithm.
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @return a tibble containing Chromosome-arm-levels (CNV)
 #' @references  \itemize{\item   Cohen-Sharir, Y., McFarland, J.M., Abdusamad,
@@ -56,94 +56,120 @@ run_arm_cnv <- function(
   }
 
   stopifnot(inherits(seg_cnv, "GenomicRanges"))
+
   cnv_mode <- match.arg(cnv_mode)
 
-  if(
-    is.character(cnv_col) &&
-    !cnv_col %in% colnames( S4Vectors::mcols(seg_cnv) )
-  ) {
-    stop(
-      paste("the character", cnv_col,
-            "is not in S4Vectors::mcols(seg_cnv)")
+  if (!rlang::is_scalar_character(cnv_col)) stop(
+    "cnv_col should be a scalar character", call. = FALSE
+  )
+
+  if(!cnv_col %in% colnames(S4Vectors::mcols(seg_cnv))) {
+    stop("the column ", cnv_col, " ",
+         "is not in S4Vectors::mcols(seg_cnv).",
+         call. = FALSE
     )
   }
 
   if( !is.numeric(S4Vectors::mcols(seg_cnv)[[cnv_col]]) ) {
-    stop("the type of CNV column must be numeric")
+    stop("the type of CNV column should be a numeric but not a type of ",
+         typeof(S4Vectors::mcols(seg_cnv)[[cnv_col]]),
+         call. = FALSE)
   }
 
   stopifnot( is.logical(filter_centromere) )
 
   if (cnv_mode == "abs") {
-    stopifnot( all(S4Vectors::mcols(seg_cnv)[[cnv_col]]  >= 0) )
-    stopifnot( is.null(ploidy) || is.numeric(ploidy) )
+
+    if( !all(S4Vectors::mcols(seg_cnv)[[cnv_col]]  >= 0) ) stop(
+      'The CNV values in S4Vectors::mcols(seg_cnv)[[cnv_col]] ',
+      'should be above 0 when cnv_mode is "abs"',
+      call. = FALSE
+    )
+
+    if (is.null(ploidy)) ploidy <- 2L else if( !is.numeric(ploidy) ) {
+      stop("The type of ploidy should be a numeric vector but not a ",
+           "type of ", typeof(ploidy), ' when cnv_mode is "abs"',
+           call. = FALSE
+      )
+    }
+
   }
+
   if (cnv_mode == "rel") {
-    stopifnot( all(S4Vectors::mcols(seg_cnv)[[cnv_col]] %in% -1:1) )
-    stopifnot( is.numeric(threshold) && length(threshold) == 1 )
+    if( !all(S4Vectors::mcols(seg_cnv)[[cnv_col]] %in% -1:1) ) stop(
+      'The CNV values in S4Vectors::mcols(seg_cnv)[[cnv_col]] ',
+      'should be in -1, 0 and 1 when cnv_mode is "rel". ',
+      "-1 means Del of copy number, 1 means Amp of copy number ",
+      "and 0 means neutral of copy number.",
+      call. = FALSE
+    )
+    if( !(is.numeric(threshold) && length(threshold) == 1) ) stop(
+      'threshold should be a scalar numeric when cnv_mode is "abs" ',
+      "but not a type of ", typeof(threshold), " ",
+      "with length ", length(threshold), ".",
+      call. = FALSE
+    )
   }
 
 
   if ( all(GenomeInfoDb::seqlevelsStyle(seg_cnv) != "UCSC") ){
-    message("try to map seqnames of seg_cnv to UCSC style")
-    seg_cnv <- GenomeInfoDb::renameSeqlevels(
-      seg_cnv, stats::na.omit(
-        GenomeInfoDb::mapSeqlevels(
-          GenomeInfoDb::seqlevels(seg_cnv), "UCSC") )
-    )
-  }
 
-  if (is.null(ploidy)) ploidy <- 2L else {
-    stopifnot( is.numeric(ploidy) )
+    message("Mapping seqnames of seg_cnv to UCSC style", appendLF = TRUE)
+    GenomeInfoDb::seqlevels(seg_cnv) <- "UCSC"
+
   }
 
   if (is.null(ref_cytoband)) ref_cytoband <- run_arm_cnv_ref_cytoband_hg38
 
-  if (is.character(ref_cytoband) && (length(ref_cytoband) == 1) && ref_cytoband %in% c("hg19", "hg38")){
+  if (rlang::is_scalar_character(ref_cytoband) &&
+      ref_cytoband %in% c("hg19", "hg38")){
     ref_cytoband <- rlang::eval_bare(
       rlang::sym(paste0("run_arm_cnv_ref_cytoband_", ref_cytoband))
     )
+  } else if (!inherits(ref_cytoband, "GenomicRanges")){
+    stop('ref_cytoband should be a scalar character "hg19" or "hg38", ',
+         "or a self-defined GenomicRanges obeject.",
+         call. = FALSE)
   }
   arm_cytoband <- cytoband_to_arm( ref_cytoband )
 
 
   if( !is.null(sample_id_col) ){
 
-    stopifnot(
-      ( is.character(sample_id_col) || is.numeric(sample_id_col) ) &&
-        length(sample_id_col) == 1
+    if (!rlang::is_scalar_character(sample_id_col)) stop(
+      "sample_id_col should be a scalar character", call. = FALSE
     )
 
-    if(
-      is.character(sample_id_col) &&
-      !sample_id_col %in% colnames( S4Vectors::mcols(seg_cnv) )
-    ) {
-      stop(
-        paste("the character", sample_id_col,
-              "is not in S4Vectors::mcols(seg_cnv)")
+    if(!sample_id_col %in% colnames(S4Vectors::mcols(seg_cnv))) {
+      stop("the column ", sample_id_col, " ",
+           "is not in S4Vectors::mcols(seg_cnv).",
+           call. = FALSE
       )
     }
 
-    sample_len <- length(unique( S4Vectors::mcols(seg_cnv)[[sample_id_col]] ))
+    sample_id <- unique( S4Vectors::mcols(seg_cnv)[[sample_id_col]] )
 
-    if( !(length(ploidy) == 1 || sample_len == length(ploidy)) ) stop(
-      paste("the length of ploidy must equal to 1 or the number of samples")
-    )
+    if (cnv_mode == "abs") {
 
-    if ( length(ploidy) == 1 ) {
-      ploidy <- rep( ploidy, length.out = sample_len )
-      names(ploidy) <- NULL
-    }
+      if( !(length(ploidy) == 1 || length(sample_id) == length(ploidy)) ) stop(
+        "the length of ploidy must equal to 1 or the number of unique ",
+        "values in the column sample_id_col of seg_cnv.",
+        call. = FALSE
+      )
 
-    if ( is.null(names(ploidy)) ) names(ploidy) <- unique(
-      S4Vectors::mcols(seg_cnv)[[sample_id_col]]
-    )
+      if ( length(ploidy) == 1 ) {
+        ploidy <- rep( ploidy, length.out =  length(sample_id) )
+        names(ploidy) <- NULL
+      }
 
-    if (!setequal(
-      names(ploidy),
-      unique(S4Vectors::mcols(seg_cnv)[[sample_id_col]])
-    )) {
-      stop("the names of ploidy must equal to all the ID in sample_id_col")
+      if ( is.null(names(ploidy)) ) {
+        names(ploidy) <- sample_id
+      } else if (!setequal( names(ploidy), sample_id )) {
+        stop("If ploidy has names, the names of ploidy should setequal to ",
+             "the column sample_id_col of seg_cnv.",
+             call. = FALSE)
+      }
+
     }
 
     if(filter_centromere){
@@ -226,12 +252,11 @@ cytoband_to_arm <- function(cytoband_genome){
   stopifnot(inherits(cytoband_genome, "GenomicRanges"))
 
   if ( all( GenomeInfoDb::seqlevelsStyle(cytoband_genome) != "UCSC" ) ){
-    message("try to map seqnames to UCSC style")
-    cytoband_genome <- GenomeInfoDb::renameSeqlevels(
-      cytoband_genome, stats::na.omit(
-        GenomeInfoDb::mapSeqlevels(
-          GenomeInfoDb::seqlevels(cytoband_genome), "UCSC") )
-    )
+    message("try to map seqnames of ref_cytoband to UCSC style",
+            appendLF = TRUE)
+
+    GenomeInfoDb::seqlevels(cytoband_genome) <- "UCSC"
+
   }
 
   cytoband_genome <- GenomeInfoDb::keepSeqlevels(
@@ -314,19 +339,24 @@ seg_to_arm_cnv <- function(
       seg_length_frac = width / arm_width
 
     ) %>%
-    dplyr::group_by(seqnames, arm) %>%
+    dplyr::group_by(seqnames, arm)
+
+  if (cnv_mode == "rel") res <- res %>%
     dplyr::summarize(
-      arm_cnv = dplyr::case_when(
-        !!cnv_mode == "rel" ~ as.integer(
-          sum(CNV * seg_length_frac, na.rm = TRUE) > !!threshold
-        ),
-        !!cnv_mode == "abs" ~ as.integer(sign(
-          round(matrixStats::weightedMedian(
-            CNV, w = width
-          ), digits = 0) - round(!!ploidy, digits = 0)
-        ))
+      arm_cnv = as.integer(
+        sum(CNV * seg_length_frac, na.rm = TRUE) > !!threshold
       )
-    ) %>%
-    dplyr::ungroup()
-  res
+    )
+
+  if (cnv_mode == "abs") res <- res %>%
+    dplyr::summarize(
+      arm_cnv = as.integer(sign(
+        round(matrixStats::weightedMedian(
+          CNV, w = width
+        ), digits = 0) - round(!!ploidy, digits = 0)
+      ))
+    )
+
+  dplyr::ungroup(res)
+
 }

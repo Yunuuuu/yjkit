@@ -29,7 +29,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(
     ":=", ".group_col.",
 
     # seg_to_arm_cnv
-    "width", "arm_width", "seqnames", "arm",
+    "width", "arm_width", "seqnames", "arm", "CNV", "seg_length_frac",
 
     # stat_between_test_helper
     "term", "method", "term_x", "term_y",
