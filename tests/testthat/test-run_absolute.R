@@ -12,40 +12,37 @@ testthat::test_that(
         results_dir = file.path(tempdir(),"results", "ABSOLUTE"),
         BPPARAM = BiocParallel::SerialParam()
       ),
-      "-> Done.", fixed = TRUE
+      "ABSOLUTE algorithm Done.", fixed = TRUE
     )
 
     testthat::expect_snapshot_value(
-      list.files(file.path(tempdir(),"results", "ABSOLUTE")),
+      list.files(file.path(tempdir(),"results", "ABSOLUTE", "RunAbsolute")),
+      style = "serialize"
+    )
+
+    testthat::expect_snapshot_value(
+      list.files(file.path(tempdir(),"results", "ABSOLUTE",
+                           "CreateReviewObject")),
+      style = "serialize"
+    )
+
+    testthat::expect_snapshot_value(
+      list.files(file.path(tempdir(),"results", "ABSOLUTE", "reviewed")),
       style = "serialize"
     )
 
     testthat::expect_snapshot_value(
       read.table(
-        file.path(tempdir(),"results", "ABSOLUTE",
-                  "DoAbsolute.YJ.ABSOLUTE.table.txt"),
+        file.path(tempdir(),"results", "ABSOLUTE", "CreateReviewObject",
+                  "SummarizeAbsolute.PP-calls_tab.txt"),
         sep = "\t", header = TRUE
       ),
       style = "serialize"
     )
-
-    testthat::expect_snapshot_value(
-      list.files(file.path(tempdir(),"results", "ABSOLUTE", "summary_res")),
-      style = "serialize"
-    )
-
     testthat::expect_snapshot_value(
       read.table(
-        file.path(tempdir(),"results", "ABSOLUTE", "summary_res",
-                  "DoAbsolute.PP-calls_tab.txt"),
-        sep = "\t", header = TRUE
-      ),
-      style = "serialize"
-    )
-    testthat::expect_snapshot_value(
-      read.table(
-        file.path(tempdir(),"results", "ABSOLUTE", "summary_res",
-                  "DoAbsolute.PP-modes.FAILED_tab.txt"),
+        file.path(tempdir(),"results", "ABSOLUTE", "reviewed",
+                  "ReviewAbsolute.YJ.ABSOLUTE.table.txt"),
         sep = "\t", header = TRUE
       ),
       style = "serialize"

@@ -48,11 +48,11 @@
 #'   allelic. total is what this code for. Default: \code{"total"}
 #' @param min_mut_af Minimum mutation allelic fraction. Mutations with lower
 #'   allelic fractions will be filtered out before analysis. Default: \code{0.1}
-#' @param verbose if \code{TRUE}, print extra info. Default: \code{FALSE}
 #' @param BPPARAM Default: \code{\link[BiocParallel:bpparam]{bpparam()}}. \cr
 #'   \code{NULL} means \code{switch (Sys.info()[["sysname"]],} \cr
 #'   \code{Darwin = ,} \cr \code{Linux = BiocParallel::MulticoreParam(),} \cr
 #'   \code{Windows = BiocParallel::SnowParam()) }
+#' @param verbose if \code{TRUE}, print extra info. Default: \code{FALSE}
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @return  Side effect. All ABSOLUTE called results (see
 #'   \code{\link[ABSOLUTE]{RunAbsolute}}) were kept in directory
@@ -70,9 +70,10 @@
 #' system.file("extdata", "run_absolute_example_maf.rds", package = "yjtools")
 #' )
 #'
-#' run_absolute(seg = seg, maf = maf,
-#' results_dir = file.path(tempdir(),"results", "ABSOLUTE"),
-#' BPPARAM = NULL
+#' run_absolute(
+#'   seg = seg, maf = maf,
+#'   results_dir = file.path(tempdir(),"results", "ABSOLUTE"),
+#'   BPPARAM = NULL
 #' )
 #' }
 #' @references Carter, S., Cibulskis, K., Helman, E. et al. Absolute
@@ -87,8 +88,8 @@ run_absolute <- function(
   results_dir = here::here("results", "ABSOLUTE"),
   max_as_seg_count = 1500, max_neg_genome = 0.005,
   max_non_clonal = 0.05, copy_num_type = c("total", "allelic"),
-  min_mut_af = 0.1,  verbose = FALSE,
-  BPPARAM = BiocParallel::bpparam()){
+  min_mut_af = 0.1, BPPARAM = BiocParallel::bpparam(),
+  verbose = FALSE){
 
   if (!requireNamespace("ABSOLUTE", quietly = TRUE)){
     stop("ABSOLUTE needed for this function to work. Please install it",
@@ -151,7 +152,7 @@ run_absolute <- function(
 
     BiocParallel::bplapply(
       absolute_filepath[["sample_id"]],
-      function(i, seg_filepath, maf_filepath, results_dir,
+      function(i, ..fn, seg_filepath, maf_filepath, results_dir,
                sigma_p, max_sigma_h, min_ploidy, max_ploidy,
                primary_disease, platform, max_as_seg_count,
                max_non_clonal, max_neg_genome, copy_num_type, min_mut_af,
@@ -165,7 +166,7 @@ run_absolute <- function(
           maf_fn <- maf_filepath[[i]]
         }
 
-        safe_runAbsolute(
+        ..fn(
           seg_dat_fn = seg_filepath[i],
           maf_fn = maf_fn, sample_name = i,
           sigma_p = sigma_p, max_sigma_h = max_sigma_h,
@@ -178,6 +179,7 @@ run_absolute <- function(
         )
 
       },
+      ..fn = safe_runAbsolute,
       seg_filepath = absolute_filepath[["seg"]],
       maf_filepath = absolute_filepath[["maf"]],
       sigma_p = sigma_p, max_sigma_h = max_sigma_h,

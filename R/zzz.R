@@ -25,8 +25,8 @@ if(getRversion() >= "2.15.1") utils::globalVariables(
     "stats",
 
     # run_absolute
-    "Chromosome", "..maf_cols", "..maf_cols2",
-    "Sample", "Tumor_Sample_Barcode", ":=",
+    "Chromosome", "Sample", "Tumor_Sample_Barcode",
+    ":=", ".group_col.",
 
     # seg_to_arm_cnv
     "width", "arm_width", "seqnames", "arm",

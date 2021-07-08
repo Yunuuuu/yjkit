@@ -13,27 +13,21 @@ run_absolute(
   max_ploidy = 10,
   primary_disease = NA,
   platform = c("SNP_6.0", "Illumina_WES", "SNP_250K_STY"),
-  temp_dir = file.path(tempdir(), "ABSOLUTE"),
-  clean_temp = FALSE,
   results_dir = here::here("results", "ABSOLUTE"),
   max_as_seg_count = 1500,
   max_neg_genome = 0.005,
   max_non_clonal = 0.05,
   copy_num_type = c("total", "allelic"),
   min_mut_af = 0.1,
-  keep_all_results = TRUE,
-  recover = FALSE,
-  verbose = FALSE,
-  BPPARAM = NULL
+  BPPARAM = BiocParallel::bpparam(),
+  verbose = FALSE
 )
 }
 \arguments{
-\item{seg}{a \code{data.frame} or a \code{file path} read as a data.fram
-containing columns "Sample", "Chromosome", "Start", "End", "Num_Probes",
-"Segment_Mean".}
+\item{seg}{a \code{data.frame} containing columns "Sample", "Chromosome",
+"Start", "End", "Num_Probes", "Segment_Mean".}
 
-\item{maf}{MAF, default is \code{NULL}, can provided as \code{data.frame} or
-\code{file path}.}
+\item{maf}{MAF, default is \code{NULL}, can provided as \code{data.frame}.}
 
 \item{sigma_p}{Provisional value of excess sample level variance used for
 mode search. Default: \code{0}}
@@ -49,14 +43,8 @@ greater ploidy values will be discarded. Default: \code{10}}
 
 \item{primary_disease}{Primary disease of the sample. Default: \code{NA}}
 
-\item{platform}{one of "SNP_6.0", "Illumina_WES", "SNP_250K_STY". Default:
-\code{"SNP_6.0"}}
-
-\item{temp_dir}{directory path used to store tempory files. Default: ABSOLUTE
-subdirectory under \code{tempdir()}}
-
-\item{clean_temp}{if \code{TRUE}, auto-clean temp dir at the end. Default:
-\code{FALSE}}
+\item{platform}{one of \code{"SNP_6.0"}, \code{"Illumina_WES"},
+\code{"SNP_250K_STY"}. Default: \code{"SNP_6.0"}}
 
 \item{results_dir}{directory path used to store result files. Default:
 \code{here::here("results", "ABSOLUTE")}}
@@ -78,31 +66,20 @@ allelic. total is what this code for. Default: \code{"total"}}
 \item{min_mut_af}{Minimum mutation allelic fraction. Mutations with lower
 allelic fractions will be filtered out before analysis. Default: \code{0.1}}
 
-\item{keep_all_results}{if \code{TRUE}, clean all results, otherwise clean
-result directory and keep most important results. Default: \code{TRUE}}
-
-\item{recover}{if \code{TRUE}, recover previous unfinished work. This is
-helpful when program stop unexpectedly when \code{clean.temp} is
-\code{FALSE}. Default: \code{FALSE}}
+\item{BPPARAM}{Default: \code{\link[BiocParallel:bpparam]{bpparam()}}. \cr
+\code{NULL} means \code{switch (Sys.info()[["sysname"]],} \cr
+\code{Darwin = ,} \cr \code{Linux = BiocParallel::MulticoreParam(),} \cr
+\code{Windows = BiocParallel::SnowParam()) }}
 
 \item{verbose}{if \code{TRUE}, print extra info. Default: \code{FALSE}}
-
-\item{BPPARAM}{see \code{\link[BiocParallel:register]{bpparam}}. Default:
-\code{NULL} means \cr \code{switch (Sys.info()[["sysname"]],} \cr
-\code{Linux = BiocParallel::MulticoreParam(),} \cr \code{Windows =
-  BiocParallel::SnowParam()) }}
 }
 \value{
-All reviewed results (see
-\code{\link[ABSOLUTE]{ExtractReviewedResults}}) were in directory
-\code{results_dir}.
-
-if keep_all_results was TRUE, all ABSOLUTE called results (see
+Side effect. All ABSOLUTE called results (see
 \code{\link[ABSOLUTE]{RunAbsolute}}) were kept in directory
-\code{file.path(results_dir, "call_res")}, all summarized multiple ABSOLUTE
-results (see \code{\link[ABSOLUTE]{CreateReviewObject}}) were kept in
-\code{file.path(results_dir, "summary_res")}, and all reviewed samples were
-kept in \code{ file.path(results_dir, "sample_summaized")}
+\code{file.path(results_dir, "RunAbsolute")}, all summarized multiple
+ABSOLUTE results (see \code{\link[ABSOLUTE]{CreateReviewObject}}) were kept
+in \code{file.path(results_dir, "CreateReviewObject")}, and all reviewed
+results were kept in \code{ file.path(results_dir, "reviewed")}
 }
 \description{
 This function is based on package
@@ -120,7 +97,8 @@ documentation} and provides an uniform interface to input data easily and
 run \code{\link[ABSOLUTE]{RunAbsolute}} parallelly.
 
 If calling for a sample failed, the error message will be written to
-\strong{error.log} under the \code{results_dir} directory.
+\code{error.log} under subdirectory \code{RunAbsolute} of
+\code{results_dir} directory.
 
 More detail about how to analyze ABSOLUTE results please see
 \href{https://www.genepattern.org/analyzing-absolute-data}{analyzing-absolute-data}.
@@ -135,8 +113,10 @@ maf <- readRDS(
 system.file("extdata", "run_absolute_example_maf.rds", package = "yjtools")
 )
 
-run_absolute(seg = seg, maf = maf,
-results_dir = file.path(tempdir(),"results", "ABSOLUTE")
+run_absolute(
+  seg = seg, maf = maf,
+  results_dir = file.path(tempdir(),"results", "ABSOLUTE"),
+  BPPARAM = NULL
 )
 }
 }

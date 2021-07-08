@@ -50,7 +50,9 @@
 #'   profiles
 #' @details By default, CIBERSORT estimates the relative fraction of each cell
 #'   type in the signature matrix, such that the sum of all fractions is equal
-#'   to 1 for a given mixture sample.
+#'   to 1 for a given mixture sample. The inspection of log transformation is
+#'   based on \href{https://www.ncbi.nlm.nih.gov/geo/geo2r/}{GEO2R} while the
+#'   raw implication is just based on \code{if(max(mixture_matrix) < 50)}.
 #'
 #'   CIBERSORT can also be used to produce a score that quantitatively measures
 #'   the overall abundance of each cell type (as described in
@@ -117,9 +119,11 @@ run_cibersort <- function(mixture_data, sig_data = NULL,
              call. = FALSE)
     }
 
-    if(absolute) abs_method <- match.arg( 'no.sumto1', 'sig.score' )
+    if(absolute) {
+        abs_method <- match.arg(abs_method, c('no.sumto1', 'sig.score') )
+    }
 
-    # read in data
+    # choose the default signature data or provided by users
 
     if (is.null(sig_data)) X <- run_cibersort_lm22 else {
         X <- sig_data
@@ -128,13 +132,17 @@ run_cibersort <- function(mixture_data, sig_data = NULL,
     rownames(X) <- X[[1]]
     X <- X[, -1, drop = FALSE]
 
-
     Y <- as.data.frame(mixture_data, make.names = FALSE)
 
-    #to prevent crashing on duplicated gene symbols, add unique numbers to identical names
+    # to prevent crashing on duplicated gene symbols, add unique numbers to
+    # identical names
     dups <- dim(Y)[1] - length(unique(Y[[1]]))
     if(dups > 0) {
-        warning(paste(dups," duplicated gene symbol(s) found in mixture file!",sep=""))
+        warning(
+            paste(dups," duplicated gene symbol(s) found in mixture file!",
+                  sep=""),
+            call. = FALSE
+        )
         rownames(Y) <- make.unique(Y[[1]], sep = ".")
     } else {
         rownames(Y) <- Y[[1]]
@@ -152,7 +160,9 @@ run_cibersort <- function(mixture_data, sig_data = NULL,
     P <- perm #number of permutations
 
     #anti-log if max < 50 in mixture file
-    if(max(Y) < 50) {Y <- 2^Y}
+    # if(max(Y) < 50) {Y <- 2^Y} # CIBERSORT implication
+
+    if(check_logged(Y)) {Y <- 2^Y} # GEO implication
 
     #quantile normalization of mixture file
     if(quantile_norm == TRUE){
@@ -165,7 +175,7 @@ run_cibersort <- function(mixture_data, sig_data = NULL,
 
     #store original mixtures
     Yorig <- Y
-    Ymedian <- max(stats::median(Yorig),1)
+    Ymedian <- max(stats::median(Yorig), 1)
 
     #intersect genes
     Xgns <- row.names(X)
