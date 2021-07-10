@@ -4,13 +4,22 @@
 \alias{stat_between_test}
 \title{Between group test}
 \usage{
-stat_between_test(data, x, y, type = c("nonparametric", "parametric"), ...)
+stat_between_test(
+  data = NULL,
+  x,
+  y,
+  type = c("nonparametric", "parametric"),
+  ...
+)
 }
 \arguments{
 \item{data}{a data.frame object containing the variables in the x and y}
 
-\item{x, y}{quoted arguments, can be a list, if x or y is a list object, each
-of x and each of y will be paired to implement test}
+\item{x, y}{if \code{data} supplied, \code{x} and \code{y} are quoted
+arguments, can be a list, if \code{x} or \code{y} is a list object, each
+element in \code{x} and in \code{y} will be paired to implement test; if
+\code{data} is NULL, \code{x} and \code{y} should be a vector or a list
+with atmomic vector in the same length.}
 
 \item{type}{if \code{type = "nonparametric"},
 \code{\link[stats]{wilcox.test}} or \code{\link[stats]{kruskal.test}} is
@@ -51,10 +60,14 @@ programming vignette} to learn more about these techniques.
 }
 
 \examples{
-  stat_between_test(mtcars, vs, mpg, type = "p")
-  stat_between_test(mtcars, vs, mpg, type = "n")
-  stat_between_test(mtcars, cyl, mpg, type = "p")
-  stat_between_test(mtcars, cyl, mpg, type = "n")
+  stat_between_test(mtcars, factor(vs), mpg, type = "p")
+  stat_between_test(mtcars, factor(vs), mpg, type = "n")
+  stat_between_test(mtcars, factor(cyl), mpg, type = "p")
+  stat_between_test(mtcars, factor(cyl), mpg, type = "n")
+  stat_between_test(x = lapply(mtcars[c(2, 8)], as.factor),
+                    y = mtcars[c(1, 3, 4)], type = "n")
+  stat_between_test(x = factor(mtcars[["vs"]]),
+                    y = mtcars["mpg"], type = "n")
 }
 \author{
 Yun \email{yunyunpp96@outlook.com}

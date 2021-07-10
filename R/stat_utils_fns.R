@@ -3,9 +3,13 @@
 #' Function to calculate statistics and P-value for both parametric and
 #' nonparametric tests.
 #'
-#' @param data a data.frame object containing the variables in the x and y
-#' @param x,y quoted arguments, can be a list, if x or y is a list object, each
-#'   of x and each of y will be paired to implement test
+#' @param data a data.frame object containing the variables in the x and y or
+#'   NULL.
+#' @param x,y if \code{data} supplied, \code{x} and \code{y} are quoted
+#'   arguments, can be a list, if \code{x} or \code{y} is a list object, each
+#'   element in \code{x} and in \code{y} will be paired to implement test; if
+#'   \code{data} is NULL, \code{x} and \code{y} should be a vector or a list
+#'   with atmomic vector in the same length.
 #' @param type if \code{type = "nonparametric"},
 #'   \code{\link[stats]{wilcox.test}} or \code{\link[stats]{kruskal.test}} is
 #'   used. \cr if \code{type = "parametric"}, \code{\link[stats]{t.test}} or
@@ -14,13 +18,12 @@
 #' @param ... other arguments passed to statistical test function,
 #'   \code{\link[stats]{wilcox.test}}, \code{\link[stats]{kruskal.test}},
 #'   \code{\link[stats]{t.test}} and \code{\link[stats]{aov}}
-#' @section Quasiquotation:
-#'   \code{x} and \code{y} in \code{stat_between_test()}
-#'   are \code{\link[rlang:nse-defuse]{quoted arguments}} This means that its
-#'   inputs are quoted to be evaluated in the context of the data. This makes it
-#'   easy to work with variables from the data frame because you can name those
-#'   directly. The flip side is that you have to use
-#'   \code{\link[rlang:nse-force]{quasiquotation}} to program with
+#' @section Quasiquotation: if \code{data} supplied, \code{x} and \code{y} in
+#'   \code{stat_between_test()} are \code{\link[rlang:nse-defuse]{quoted
+#'   arguments}} This means that its inputs are quoted to be evaluated in the
+#'   context of the data. This makes it easy to work with variables from the
+#'   data frame because you can name those directly. The flip side is that you
+#'   have to use \code{\link[rlang:nse-force]{quasiquotation}} to program with
 #'   \code{stat_between_test()}. See a tidy evaluation tutorial such as the
 #'   \href{https://dplyr.tidyverse.org/articles/programming.html}{dplyr
 #'   programming vignette} to learn more about these techniques.
@@ -34,37 +37,120 @@
 #'   in \code{data}
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @examples
-#'   stat_between_test(mtcars, vs, mpg, type = "p")
-#'   stat_between_test(mtcars, vs, mpg, type = "n")
-#'   stat_between_test(mtcars, cyl, mpg, type = "p")
-#'   stat_between_test(mtcars, cyl, mpg, type = "n")
+#'   stat_between_test(mtcars, factor(vs), mpg, type = "p")
+#'   stat_between_test(mtcars, factor(vs), mpg, type = "n")
+#'   stat_between_test(mtcars, factor(cyl), mpg, type = "p")
+#'   stat_between_test(mtcars, factor(cyl), mpg, type = "n")
+#'   stat_between_test(x = lapply(mtcars[c(2, 8)], as.factor),
+#'                     y = mtcars[c(1, 3, 4)], type = "n")
+#'   stat_between_test(x = factor(mtcars[["vs"]]),
+#'                     y = mtcars["mpg"], type = "n")
 #' @export
-stat_between_test <- function(data, x, y,
+stat_between_test <- function(data = NULL, x, y,
                               type = c("nonparametric", "parametric"),
                               ...){
 
-  stopifnot(inherits(data, "data.frame"))
   type <- match.arg(type)
 
-  quo_list_x <- rlang::enquos(x)
-  label_list_x <- rlang::enexprs(x)
-  quo_list_y <- rlang::enquos(y)
-  label_list_y <- rlang::enexprs(y)
+  if(!is.null(data)){
 
-  purrr::map_dfr(seq_along(quo_list_y), function(y_i){
+    stopifnot(inherits(data, "data.frame"))
+    quo_list_x <- rlang::enquos(x)
+    label_list_x <- rlang::enexprs(x)
+    quo_list_y <- rlang::enquos(y)
+    label_list_y <- rlang::enexprs(y)
 
-    purrr::map_dfr(seq_along(quo_list_x), function(x_i){
+    res <- purrr::map_dfr(seq_along(quo_list_y), function(y_i){
 
-      stat_between_test_helper(data = data,
-                             x = !!quo_list_x[[x_i]],
-                             y = !!quo_list_y[[y_i]],
-                             x_label = deparse1(label_list_x[[x_i]]),
-                             y_label = deparse1(label_list_y[[y_i]]),
-                             type = type,)
+      purrr::map_dfr(seq_along(quo_list_x), function(x_i){
+
+        stat_between_test_helper(data = data,
+                                 x = !!quo_list_x[[x_i]],
+                                 y = !!quo_list_y[[y_i]],
+                                 x_label = deparse1(label_list_x[[x_i]]),
+                                 y_label = deparse1(label_list_y[[y_i]]),
+                                 type = type, ...)
+
+      })
+    })
+
+  } else {
+
+    label_list_x <- rlang::enexprs(x)
+    label_list_y <- rlang::enexprs(y)
+
+    # check the right type of x
+    if (is.character(x) || is.factor(x)) {
+
+      x <- list(x = x)
+      label_list_x <- lapply(label_list_x, deparse1)
+
+    } else if (is.list(x)){
+
+      label_list_x <- names(x)
+
+    } else {
+      stop("unsupported type of x, ",
+           "x should be a character or a factor or a list ",
+           "of character or factor vector with same length.",
+           call. = FALSE)
+    }
+
+    if (
+      !all(vapply(x, function(x) is.character(x) || is.factor(x), logical(1)))
+    ) stop("x should be a character or a factor or a list ",
+           "of character or factor vector with same length.",
+           call. = FALSE)
+
+    # check the right type of y
+    if (is.numeric(y)) {
+
+      y <- list(y = y)
+      label_list_y <- lapply(label_list_y, deparse1)
+
+    } else if (is.list(y)){
+
+      label_list_y <- names(y)
+
+    } else {
+      stop("unsupported type of y, ",
+           "y should be a numeric vector or a list ",
+           "of numeric vector with same length.",
+           call. = FALSE)
+    }
+
+    if (
+      !all(vapply(y, is.numeric, logical(1)))
+    ) stop("y should be a numeric vector or a list ",
+           "of numeric vector with same length.",
+           call. = FALSE)
+
+    # check the same length of x and y
+    if(!identical(
+      length(unique(vapply(c(x, y), length, integer(1)))), 1L
+    )){
+      stop("the length of each vector in x and in y should be the same",
+           call. = FALSE)
+    }
+
+    res <- purrr::map_dfr(seq_along(y), function(y_i){
+
+      purrr::map_dfr(seq_along(x), function(x_i){
+
+        stat_between_test_helper(data = NULL,
+                                 x = x[[x_i]],
+                                 y = y[[y_i]],
+                                 x_label = label_list_x[[x_i]],
+                                 y_label = label_list_y[[y_i]],
+                                 type = type, ...)
+
+      })
 
     })
-  })
 
+  }
+
+  res
 
 }
 
@@ -137,7 +223,6 @@ stat_cor_test <- function(x, y = NULL,
     }) %>% tibble::enframe(name = "y", value = "value") %>%
       tidyr::unnest(cols = value)
 
-
   }) %>% tibble::enframe(name = "x", value = "value") %>%
     tidyr::unnest(cols = value)
 
@@ -208,28 +293,61 @@ stat_cox_test <- function(data, formula,
 
 # stat_between_test utility function --------------------------------------
 
-stat_between_test_helper <- function(data, x, y, x_label = NULL, y_label = NULL,
+stat_between_test_helper <- function(data = NULL, x, y,
+                                     x_label = NULL, y_label = NULL,
                                      type = c("nonparametric", "parametric"),
                                      ...){
 
-  stopifnot(inherits(data, "data.frame"))
-  type <- match.arg(type)
-
-  quo_x <- rlang::enquo(x)
-  quo_y <- rlang::enquo(y)
   if (is.null(x_label)) x_label <- deparse1(rlang::enexpr(x))
   if (is.null(y_label)) y_label <- deparse1(rlang::enexpr(x))
+
+  if(!is.null(data)){
+
+    stopifnot(inherits(data, "data.frame"))
+    quo_x <- rlang::enquo(x)
+    quo_y <- rlang::enquo(y)
+    test_data <- dplyr::mutate(
+      data, ..x = !!quo_x, ..y = !!quo_y
+    )
+
+    if(!(is.character(test_data[["..x"]]) || is.factor(test_data[["..x"]]))) {
+      stop("x in data should be a type of character or factor but not a ",
+           "type of ", typeof(test_data[["..x"]]),
+           call. = FALSE)
+    }
+
+    x_unique_levels <- length(unique(stats::na.omit(test_data[["..x"]])))
+
+    if(x_unique_levels < 2) stop("the unique values (omit missing values) for x in data should be at least 2", call. = FALSE)
+
+    if (!is.numeric(test_data[["..y"]])) stop("y in data must be a numeric vector", call. = FALSE)
+
+  } else {
+
+    if(!identical(length(x), length(y))) {
+      stop("the length of vector x and y should be the same",
+           call. = FALSE)
+    }
+
+    if(!(is.character(x) || is.factor(x))) {
+      stop("x should be a type of character or factor but not a ",
+           "type of ", typeof(x), call. = FALSE)
+    }
+
+    x_unique_levels <- length(unique(stats::na.omit(x)))
+    if(x_unique_levels < 2) stop("the unique values (omit missing values) for x should be at least 2", call. = FALSE)
+
+    if (!is.numeric(y)) stop("y should be a numeric vector but not a type of ",
+                             typeof(y), call. = FALSE)
+
+    test_data <- tibble::tibble(
+      ..x = x, ..y = y
+    )
+
+  }
+
+  type <- match.arg(type)
   arg_dots <- rlang::enquos(...)
-
-  test_data <- dplyr::mutate(
-    data, ..x = !!quo_x, ..y = !!quo_y
-  )
-
-  x_unique_levels <- length(unique(stats::na.omit(test_data[["..x"]])))
-
-  if(x_unique_levels < 2) stop("the unique values (omit missing values) for x in data should be at least 2")
-
-  if (!is.numeric(test_data[["..y"]])) stop("y in data must be a numeric vector")
 
   if (type == "parametric") {
 

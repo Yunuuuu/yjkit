@@ -6,14 +6,13 @@
 \usage{
 gganno_between_test(
   data,
-  mapping = aes(x, y, ...),
+  mapping = NULL,
   type = c("nonparametric", "parametric"),
   format_label = TRUE,
-  label_position = c(0.02, 1),
-  label_justification = NULL,
+  label_position = c(0.02, 0.98),
+  label_justification = c(0, 1),
   anno_statistic = TRUE,
   label_sep = NULL,
-  ggtheme = ggthemes::theme_few(),
   anno_args = list(fontface = "bold"),
   ...
 )
@@ -31,19 +30,19 @@ used. \cr if \code{type = "parametric"}, \code{\link[stats]{t.test}} or
 \code{\link[stats]{aov}} is used.\cr which method is used depends on the
 unique values of \code{x} in \code{data}}
 
-\item{format_label}{if \code{TRUE}, will be formatted by
+\item{format_label}{if \code{TRUE}, numeric label will be formatted by
 \code{\link{format_num}}. Default: \code{TRUE}}
 
 \item{label_position}{the position where the label will added, can be a
-numeric vector of length 2 or a scalar character vector \code{(one of
-  "title", "subtitle", "caption", and "tag")}.}
+numeric vector of length two or a character vector with length one (one of
+\code{"lefttop", "righttop", "leftbottom", and "rightbottom"}) or length
+two (See below \code{label_justification}). Default: \code{c(0.02, 0.98)}.}
 
-\item{label_justification}{These can either be a number between 0
-(\code{right/bottom}) and 1 (\code{top/left}) or a character
-("\code{left}", "\code{middle}", "\code{right}", "\code{bottom}",
-"\code{center}", "\code{top}"). There are two special alignments:
-"\code{inward}" and "\code{outward}". Inward always aligns text towards the
-center, and outward aligns it away from the center.}
+\item{label_justification}{label_justification must be a element-two (or one)
+character or numeric vector. Possible string values are: "left", "right",
+"centre", "center", "bottom", and "top". For numeric values, 0 means left
+(bottom) alignment and 1 means right (top) alignment. Default: \code{c(0,
+  1)}}
 
 \item{anno_statistic}{a scalar logical, Should test statistic be annotated in
 the label}
@@ -51,17 +50,14 @@ the label}
 \item{label_sep}{see argument \code{label}. String to insert between the test
 statistic and test P-value.}
 
-\item{ggtheme}{a ggplot2 theme object. Provided as a ggplot2 theme object or
-a function (can be a function name as a string) implemented as a ggplot2
-theme object.}
-
-\item{anno_args}{additional arguments control the \code{label}. See
-\code{\link[grid:grid.text]{textGrob}} and
-\code{\link[ggplot2:element]{element_text}}}
+\item{anno_args}{Other arguments passed on to \code{\link[ggplot2]{layer}}.
+These are often aesthetics, used to set an aesthetic to a fixed value, like
+colour = "red" or size = 3. They may also be parameters to the paired
+geom/stat. See \code{\link[ggplot2:geom_text]{geom_text}}}
 
 \item{...}{other arguments passed to statistical test function,
 \code{\link[stats]{wilcox.test}}, \code{\link[stats]{kruskal.test}},
-\code{\link[stats]{t.test}} and \code{\link[stats]{aov}}}
+\code{\link[stats]{t.test}} and \code{\link[stats]{aov}}.}
 }
 \value{
 a ggplot2 object with annotation of group or condition comparisons

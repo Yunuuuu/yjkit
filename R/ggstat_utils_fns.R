@@ -12,30 +12,28 @@
 #'   used. \cr if \code{type = "parametric"}, \code{\link[stats]{t.test}} or
 #'   \code{\link[stats]{aov}} is used.\cr which method is used depends on the
 #'   unique values of \code{x} in \code{data}
-#' @param format_label if \code{TRUE}, will be formatted by
+#' @param format_label if \code{TRUE}, numeric label will be formatted by
 #'   \code{\link{format_num}}. Default: \code{TRUE}
 #' @param label_position the position where the label will added, can be a
-#'   numeric vector of length 2 or a scalar character vector \code{(one of
-#'   "title", "subtitle", "caption", and "tag")}.
-#' @param label_justification These can either be a number between 0
-#'   (\code{right/bottom}) and 1 (\code{top/left}) or a character
-#'   ("\code{left}", "\code{middle}", "\code{right}", "\code{bottom}",
-#'   "\code{center}", "\code{top}"). There are two special alignments:
-#'   "\code{inward}" and "\code{outward}". Inward always aligns text towards the
-#'   center, and outward aligns it away from the center.
+#'   numeric vector of length two or a character vector with length one (one of
+#'   \code{"lefttop", "righttop", "leftbottom", and "rightbottom"}) or length
+#'   two (See below \code{label_justification}). Default: \code{c(0.02, 0.98)}.
+#' @param label_justification label_justification must be a element-two (or one)
+#'   character or numeric vector. Possible string values are: "left", "right",
+#'   "centre", "center", "bottom", and "top". For numeric values, 0 means left
+#'   (bottom) alignment and 1 means right (top) alignment. Default: \code{c(0,
+#'   1)}
 #' @param anno_statistic a scalar logical, Should test statistic be annotated in
 #'   the label
 #' @param label_sep see argument \code{label}. String to insert between the test
 #'   statistic and test P-value.
-#' @param ggtheme a ggplot2 theme object. Provided as a ggplot2 theme object or
-#'   a function (can be a function name as a string) implemented as a ggplot2
-#'   theme object.
-#' @param anno_args additional arguments control the \code{label}. See
-#'   \code{\link[grid:grid.text]{textGrob}} and
-#'   \code{\link[ggplot2:element]{element_text}}
+#' @param anno_args  Other arguments passed on to \code{\link[ggplot2]{layer}}.
+#'   These are often aesthetics, used to set an aesthetic to a fixed value, like
+#'   colour = "red" or size = 3. They may also be parameters to the paired
+#'   geom/stat. See \code{\link[ggplot2:geom_text]{geom_text}}
 #' @param ... other arguments passed to statistical test function,
 #'   \code{\link[stats]{wilcox.test}}, \code{\link[stats]{kruskal.test}},
-#'   \code{\link[stats]{t.test}} and \code{\link[stats]{aov}}
+#'   \code{\link[stats]{t.test}} and \code{\link[stats]{aov}}.
 #' @return a ggplot2 object with annotation of group or condition comparisons
 #'   test results
 #' @author Yun \email{yunyunpp96@@outlook.com}
@@ -43,14 +41,13 @@
 #' gganno_between_test(mtcars, aes(factor(cyl), mpg)) +
 #'   ggplot2::geom_boxplot()
 #' @export
-gganno_between_test <- function(data, mapping = aes(x, y, ...),
+gganno_between_test <- function(data, mapping = NULL,
                                 type = c("nonparametric", "parametric"),
                                 format_label = TRUE,
-                                label_position = c(0.02, 1),
-                                label_justification = NULL,
+                                label_position = c(0.02, 0.98),
+                                label_justification = c(0, 1),
                                 anno_statistic = TRUE,
                                 label_sep = NULL,
-                                ggtheme = ggthemes::theme_few(),
                                 anno_args = list(fontface = "bold"),
                                 ...){
 
@@ -59,12 +56,13 @@ gganno_between_test <- function(data, mapping = aes(x, y, ...),
     paste0("lack of ", c("x", "y")[!test_aes], " aesthetic mappings")
   )
 
+  type <- match.arg(type)
+
   test_res <- stat_between_test_helper(data = data,
                                        x = !!mapping$x,
                                        y = !!mapping$y,
                                        type = type,
                                        ...)
-
 
   if (anno_statistic) {
     label <- c(test_res$statistic, test_res$p.value) %>%
@@ -75,11 +73,12 @@ gganno_between_test <- function(data, mapping = aes(x, y, ...),
     label <- c(`P-value` = test_res$p.value)
   }
 
-  rlang::exec(gganno_text, data = data, mapping = mapping,
+  ggplot2::ggplot(data = data, mapping = mapping)+
+  rlang::exec(ggstat_anno_helper, geom = "text",
               label = label, format_label = format_label,
               label_position = label_position,
               label_justification = label_justification,
-              label_sep = label_sep, ggtheme, !!!anno_args)
+              label_sep = label_sep, !!!anno_args)
 }
 
 
@@ -110,26 +109,24 @@ gganno_between_test <- function(data, mapping = aes(x, y, ...),
 #' @param conf_level confidence level for the returned confidence interval.
 #'   Currently only used for the Pearson product moment correlation coefficient
 #'   if there are at least 4 complete pairs of observations.
-#' @param format_label if \code{TRUE}, will be formatted by
+#' @param format_label if \code{TRUE}, numeric label will be formatted by
 #'   \code{\link{format_num}}. Default: \code{TRUE}
 #' @param label_position the position where the label will added, can be a
-#'   numeric vector of length 2 or a scalar character vector \code{(one of
-#'   "title", "subtitle", "caption", and "tag")}.
-#' @param label_justification These can either be a number between 0
-#'   (\code{right/bottom}) and 1 (\code{top/left}) or a character
-#'   ("\code{left}", "\code{middle}", "\code{right}", "\code{bottom}",
-#'   "\code{center}", "\code{top}"). There are two special alignments:
-#'   "\code{inward}" and "\code{outward}". Inward always aligns text towards the
-#'   center, and outward aligns it away from the center.
+#'   numeric vector of length two or a character vector with length one (one of
+#'   \code{"lefttop", "righttop", "leftbottom", and "rightbottom"}) or length
+#'   two (See below \code{label_justification}). Default: \code{c(0.02, 0.98)}.
+#' @param label_justification label_justification must be a element-two (or one)
+#'   character or numeric vector. Possible string values are: "left", "right",
+#'   "centre", "center", "bottom", and "top". For numeric values, 0 means left
+#'   (bottom) alignment and 1 means right (top) alignment. Default: \code{c(0,
+#'   1)}.
 #' @param anno_statistic a scalar logical, Should test statistic added in label
 #' @param label_sep see argument \code{label}. String to insert between the test
 #'   statistic and test P-value.
-#' @param ggtheme a ggplot2 theme object. Provided as a ggplot2 theme object or
-#'   a function (can be a function name as a string) implemented as a ggplot2
-#'   theme object.
-#' @param anno_args additional arguments control the \code{label}. See
-#'   \code{\link[grid:grid.text]{textGrob}} and
-#'   \code{\link[ggplot2:element]{element_text}}
+#' @param anno_args  Other arguments passed on to \code{\link[ggplot2]{layer}}.
+#'   These are often aesthetics, used to set an aesthetic to a fixed value, like
+#'   colour = "red" or size = 3. They may also be parameters to the paired
+#'   geom/stat. See \code{\link[ggplot2:geom_text]{geom_text}}
 #' @param ... Other parameters for \code{\link[stats]{cor.test}}
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @examples
@@ -137,7 +134,7 @@ gganno_between_test <- function(data, mapping = aes(x, y, ...),
 #'     ggplot2::geom_point()+
 #'     ggplot2::geom_smooth()
 #' @export
-gganno_cor_test <- function(data, mapping = aes(x, y, ...),
+gganno_cor_test <- function(data, mapping = NULL,
                             use = c("pairwise.complete.obs",
                                     "everything", "all.obs", "complete.obs",
                                     "na.or.complete"),
@@ -145,11 +142,10 @@ gganno_cor_test <- function(data, mapping = aes(x, y, ...),
                             alternative = c("two.sided", "less", "greater"),
                             exact = TRUE, conf_level = 0.95,
                             format_label = TRUE,
-                            label_position = c(0.02, 1),
-                            label_justification = NULL,
+                            label_position = c(0.02, 0.98),
+                            label_justification = c(0, 1),
                             anno_statistic = TRUE,
                             label_sep = NULL,
-                            ggtheme = ggthemes::theme_few(),
                             anno_args = list(fontface = "bold"),
                             ...){
 
@@ -158,7 +154,7 @@ gganno_cor_test <- function(data, mapping = aes(x, y, ...),
     paste0("lack of ", c("x", "y")[!test_aes], " aesthetic mappings")
   )
 
-  use = match.arg(use)
+  use <- match.arg(use)
   method <- match.arg(method)
   alternative <- match.arg(alternative)
 
@@ -173,7 +169,6 @@ gganno_cor_test <- function(data, mapping = aes(x, y, ...),
   )
   test_res <- rlang::eval_tidy(test_res)
 
-
   if (anno_statistic) {
     label <- c(test_res$estimate, test_res$p.value) %>%
       rlang::set_names(
@@ -183,10 +178,79 @@ gganno_cor_test <- function(data, mapping = aes(x, y, ...),
     label <- c(`P-value` = test_res$p.value)
   }
 
-  rlang::exec(gganno_text, data = data, mapping = mapping,
-              label = label, format_label = format_label,
-              label_position = label_position,
-              label_justification = label_justification,
-              label_sep = label_sep, ggtheme, !!!anno_args)
+  ggplot2::ggplot(data = data, mapping = mapping)+
+    rlang::exec(ggstat_anno_helper, geom = "text",
+                label = label, format_label = format_label,
+                label_position = label_position,
+                label_justification = label_justification,
+                label_sep = label_sep, !!!anno_args)
+
 }
+
+
+# ggstat_anno_helper ------------------------------------------------
+
+#' Create an annotation layer with text annotation
+#'
+#' This function Creates an ggplot2 object with annotation.
+#'
+#' @param label the character which will be added to the plot, will be connected
+#'   by \code{paste(names(label), label, collapse = label_sep, sep = ": ")}
+#' @param format_label if \code{TRUE}, numeric label will be formatted by
+#'   \code{\link{format_num}}. Default: \code{TRUE}
+#' @param label_position the position where the label will added, can be a
+#'   numeric vector of length two or a character vector with length one (one of
+#'   \code{"lefttop", "righttop", "leftbottom", and "rightbottom"}) or length
+#'   two (See below \code{label_justification}). Default: \code{c(0.02, 0.98)}.
+#' @param label_justification label_justification must be a element-two (or one)
+#'   character or numeric vector. Possible string values are: "left", "right",
+#'   "centre", "center", "bottom", and "top". For numeric values, 0 means left
+#'   (bottom) alignment and 1 means right (top) alignment. Default: \code{c(0,
+#'   1)}
+#' @param label_sep see argument \code{label}. String to insert between each of
+#'   the \code{label}.
+#' @param ... Other arguments passed on to \code{\link[ggplot2]{layer}}.
+#'   These are often aesthetics, used to set an aesthetic to a fixed value, like
+#'   colour = "red" or size = 3. They may also be parameters to the paired
+#'   geom/stat. See \code{\link[ggplot2:geom_text]{geom_text}}
+#' @return a ggplot2 annotation layer
+# @examples
+#   ggstat_anno(label = "a", label_position = c(0.5, 0.5))
+#' @author Yun \email{yunyunpp96@@outlook.com}
+ggstat_anno_helper <- function(label, format_label = TRUE,
+                               label_position = c(0.02, 0.98),
+                               label_justification = c(0, 1),
+                               label_sep = NULL,
+                               ...){
+
+  if(identical(length(label_position), 1L) && is.null(label_sep)) {
+
+    label_sep <- "; "
+
+  }
+
+  if(identical(length(label_position), 2L) && is.null(label_sep)) {
+
+    label_sep <- "\n"
+
+  }
+
+  if (format_label && is.numeric(label)) {
+    label_format <- format_num(label)
+  } else {
+    label_format <- as.character(label)
+  }
+
+  label <- stringr::str_c(names(label), label_format, sep = ": ",
+                          collapse = label_sep)
+
+  ggannotate_npc(geom = "text",
+                 label = label,
+                 label_position = label_position,
+                 label_justification,
+                 ...)
+
+}
+
+
 
