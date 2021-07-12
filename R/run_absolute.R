@@ -5,7 +5,9 @@
 #'   parallel evaluation and adjusting personal convention
 #'
 #' @details \href{https://www.nature.com/articles/nbt.2203}{ABSOLUTE} is a
-#'   famous software developed by Broad Institute, However, the
+#'   famous software developed by Broad Institute, Using
+#'   install.packages("https://software.broadinstitute.org/cancer/cga/sites/default/files/data/tools/absolute/ABSOLUTE_1.0.6.tar.gz",
+#'   repos = NULL, type = "source") to install it. However, the
 #'   \code{\link[ABSOLUTE]{RunAbsolute}} function points to estimate one sample
 #'   each time and sets no default values. \code{\link{run_absolute}} helps
 #'   users set default parameters based on
@@ -64,14 +66,10 @@
 #'   \code{ file.path(results_dir, "reviewed")}
 #' @examples
 #' \donttest{
-#' seg <- readRDS(
-#' system.file("extdata", "run_absolute_example_seg.rds", package = "yjtools")
-#' )
-#'
-#' maf <- readRDS(
-#' system.file("extdata", "run_absolute_example_maf.rds", package = "yjtools")
-#' )
-#'
+#' seg <- readRDS(system.file("extdata", "run_absolute_example_seg.rds",
+#'                            package = "yjtools"))
+#' maf <- readRDS(system.file("extdata", "run_absolute_example_maf.rds",
+#'                            package = "yjtools"))
 #' run_absolute(
 #'   seg = seg, maf = maf,
 #'   results_dir = file.path(tempdir(),"results", "ABSOLUTE"),
@@ -94,7 +92,11 @@ run_absolute <- function(
   verbose = FALSE){
 
   if (!requireNamespace("ABSOLUTE", quietly = TRUE)){
-    stop("ABSOLUTE needed for this function to work. Please install it",
+    stop("ABSOLUTE needed for this function to work, ",
+         "please install it using ",
+         "install.packages(",
+         '"https://software.broadinstitute.org/cancer/cga/sites/default/files/data/tools/absolute/ABSOLUTE_1.0.6.tar.gz", ',
+         'repos = NULL, type = "source") ', "firstly.",
          call. = FALSE)
   }
   if (!requireNamespace("data.table", quietly = TRUE)){
@@ -250,12 +252,11 @@ run_absolute <- function(
                          appendLF = TRUE)
 
   }
-
   cat("ABSOLUTE algorithm Done.")
 }
 
 
-# run_absolute utility functions ----------------------------------------------
+# run_absolute utility functions --------------------------------------
 
 safe_runAbsolute <- function(
   seg_dat_fn, maf_fn, sample_name, sigma_p, max_sigma_h,
@@ -401,9 +402,7 @@ run_absolute_validate_seg_and_maf_data <- function(seg, maf = NULL){
       dbSNP_Val_Status = "dbSNP_Val_Status"
     )
 
-    lack_cols <- setdiff(
-      names(maf_cols), colnames(maf)
-    )
+    lack_cols <- setdiff(names(maf_cols), colnames(maf))
 
     if ("Start_position" %in% colnames(maf)) {
       maf_cols <- c(maf_cols, Start_position = "Start_position")
@@ -484,8 +483,7 @@ run_absolute_prepare_seg_and_maf_data <- function(seg, maf = NULL, temp_dir){
 
   # prepare seg data
   seg <- seg[Sample %in% .sample_id., ]
-  .seg_filepath. <- file.path(temp_dir,
-                              paste0(.sample_id., ".seg"))
+  .seg_filepath. <- file.path(temp_dir, paste0(.sample_id., ".seg"))
 
   names(.seg_filepath.) <- .sample_id.
 
