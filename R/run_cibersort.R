@@ -189,7 +189,7 @@ run_cibersort <- function(mixture_data, sig_data = NULL,
     X <- (X - mean(X)) / stats::sd(as.vector(X))
 
     #empirical null distribution of correlation coefficients
-    if(P > 0) {nulldist <- sort(doPerm(P, X, Y, absolute, abs_method)$dist)}
+    if(P > 0) {nulldist <- sort(cibersort_do_perm(P, X, Y, absolute, abs_method)$dist)}
 
     header <- c('Mixture',colnames(X),"P-value","Correlation","RMSE")
     if(absolute) header <- c(header, paste('Absolute score (',abs_method,')',sep=""))
@@ -208,7 +208,7 @@ run_cibersort <- function(mixture_data, sig_data = NULL,
         y <- (y - mean(y)) / stats::sd(y)
 
         #run SVR core algorithm
-        result <- CoreAlg(X, y, absolute, abs_method)
+        result <- cibersort_core_algorithm(X, y, absolute, abs_method)
 
         #get results
         w <- result$w
@@ -243,8 +243,8 @@ run_cibersort <- function(mixture_data, sig_data = NULL,
     obj
 }
 
-#Core algorithm
-CoreAlg <- function(X, y, absolute, abs_method){
+# Core algorithm
+cibersort_core_algorithm <- function(X, y, absolute, abs_method){
 
     #try different values of nu
     svn_itor <- 3
@@ -295,7 +295,7 @@ CoreAlg <- function(X, y, absolute, abs_method){
 }
 
 #do permutations
-doPerm <- function(perm, X, Y, absolute, abs_method){
+cibersort_do_perm <- function(perm, X, Y, absolute, abs_method){
     itor <- 1
     Ylist <- as.list(data.matrix(Y))
     dist <- matrix()
@@ -310,7 +310,7 @@ doPerm <- function(perm, X, Y, absolute, abs_method){
         yr <- (yr - mean(yr)) / stats::sd(yr)
 
         #run CIBERSORT core algorithm
-        result <- CoreAlg(X, yr, absolute, abs_method)
+        result <- cibersort_core_algorithm(X, yr, absolute, abs_method)
 
         mix_r <- result$mix_r
 
