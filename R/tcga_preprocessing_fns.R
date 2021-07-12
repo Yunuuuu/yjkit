@@ -51,7 +51,7 @@ tcga_remove_duplicated_samples <- function(barcode){
     dplyr::ungroup()
 
   if(any(barcode_tibble$n > 1)) {
-    warning("There remains duplicated samples after applying Firehose TCGA replicated samples preprocessing criteria")
+    warning("There remains duplicated samples after applying Firehose TCGA replicated samples preprocessing criteria", call. = FALSE)
   }
 
   remove_duplicated_tibble <- dplyr::distinct(
