@@ -28,8 +28,10 @@ meaning amp) and samples ID in
 \item{sample_id_col}{a scalar character gives the column containing sample ID}
 
 \item{ref_cytoband}{is a GenomicRanges obeject containing the Cytoband
-reference, It can be a scalar character "hg19" or "hg38", or you can
-provided a self-defined GenomicRanges obeject. Default: "hg38"}
+reference, It can be a scalar character \code{"hg19"} or \code{"hg38"}, or
+you can provided a self-defined GenomicRanges obeject. \code{"hg38"} is
+derived from AnnotationHub by record id \code{"AH53178"} and \code{"hg19"}
+is by record id \code{"AH53177"}. Default: \code{"hg38"}.}
 
 \item{filter_centromere}{Whether to include or exclude segments across
 centromere. Default: \code{TRUE}}
@@ -54,7 +56,7 @@ Caculate Chromosome-arm-levels copy number variation
 }
 \examples{
 seg_cnv <- readRDS(system.file("extdata", "run_arm_cnv_example_seg_cnv.rds",
-package = "yjtools"))
+                               package = "yjtools"))
 arm_cnv_res <- run_arm_cnv(seg_cnv, "CNV", "barcode")
 }
 \references{

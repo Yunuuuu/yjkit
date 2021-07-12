@@ -15,15 +15,12 @@ AnnotationHub::query(
 run_arm_cnv_ref_cytoband_hg19 <- anno_hub[["AH53177"]]
 run_arm_cnv_ref_cytoband_hg38 <- anno_hub[["AH53178"]]
 
-
 # run_cibersort -----------------------------------------------------------
 
 run_cibersort_lm22 <- readr::read_tsv(
   here::here("data-raw", "LM22.txt"),
   col_names = TRUE
 )
-
-
 
 usethis::use_data(
   run_arm_cnv_ref_cytoband_hg19,
@@ -34,6 +31,3 @@ usethis::use_data(
   compress = "gzip",
   version = 3
 )
-
-
-

@@ -90,7 +90,9 @@ parallel evaluation and adjusting personal convention
 }
 \details{
 \href{https://www.nature.com/articles/nbt.2203}{ABSOLUTE} is a
-famous software developed by Broad Institute, However, the
+famous software developed by Broad Institute, Using
+install.packages("https://software.broadinstitute.org/cancer/cga/sites/default/files/data/tools/absolute/ABSOLUTE_1.0.6.tar.gz",
+repos = NULL, type = "source") to install it. However, the
 \code{\link[ABSOLUTE]{RunAbsolute}} function points to estimate one sample
 each time and sets no default values. \code{\link{run_absolute}} helps
 users set default parameters based on
@@ -107,14 +109,10 @@ More detail about how to analyze ABSOLUTE results please see
 }
 \examples{
 \donttest{
-seg <- readRDS(
-system.file("extdata", "run_absolute_example_seg.rds", package = "yjtools")
-)
-
-maf <- readRDS(
-system.file("extdata", "run_absolute_example_maf.rds", package = "yjtools")
-)
-
+seg <- readRDS(system.file("extdata", "run_absolute_example_seg.rds",
+                           package = "yjtools"))
+maf <- readRDS(system.file("extdata", "run_absolute_example_maf.rds",
+                           package = "yjtools"))
 run_absolute(
   seg = seg, maf = maf,
   results_dir = file.path(tempdir(),"results", "ABSOLUTE"),

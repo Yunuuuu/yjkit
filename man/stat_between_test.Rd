@@ -13,7 +13,8 @@ stat_between_test(
 )
 }
 \arguments{
-\item{data}{a data.frame object containing the variables in the x and y}
+\item{data}{a data.frame object containing the variables in the x and y or
+NULL.}
 
 \item{x, y}{if \code{data} supplied, \code{x} and \code{y} are quoted
 arguments, can be a list, if \code{x} or \code{y} is a list object, each
@@ -47,13 +48,12 @@ used.\cr which method is used depends on the unique values of \code{x term}
 in \code{data}
 }
 \section{Quasiquotation}{
-
-\code{x} and \code{y} in \code{stat_between_test()}
-are \code{\link[rlang:nse-defuse]{quoted arguments}} This means that its
-inputs are quoted to be evaluated in the context of the data. This makes it
-easy to work with variables from the data frame because you can name those
-directly. The flip side is that you have to use
-\code{\link[rlang:nse-force]{quasiquotation}} to program with
+ if \code{data} supplied, \code{x} and \code{y} in
+\code{stat_between_test()} are \code{\link[rlang:nse-defuse]{quoted
+  arguments}} This means that its inputs are quoted to be evaluated in the
+context of the data. This makes it easy to work with variables from the
+data frame because you can name those directly. The flip side is that you
+have to use \code{\link[rlang:nse-force]{quasiquotation}} to program with
 \code{stat_between_test()}. See a tidy evaluation tutorial such as the
 \href{https://dplyr.tidyverse.org/articles/programming.html}{dplyr
 programming vignette} to learn more about these techniques.
