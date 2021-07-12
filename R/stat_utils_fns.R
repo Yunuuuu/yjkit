@@ -60,9 +60,9 @@ stat_between_test <- function(data = NULL, x, y,
     quo_list_y <- rlang::enquos(y)
     label_list_y <- rlang::enexprs(y)
 
-    res <- purrr::map_dfr(seq_along(quo_list_y), function(y_i){
+    y_list <- lapply(seq_along(quo_list_y), function(y_i){
 
-      purrr::map_dfr(seq_along(quo_list_x), function(x_i){
+      x_list <- lapply(seq_along(quo_list_x), function(x_i){
 
         stat_between_test_helper(data = data,
                                  x = !!quo_list_x[[x_i]],
@@ -72,7 +72,12 @@ stat_between_test <- function(data = NULL, x, y,
                                  type = type, ...)
 
       })
+
+      dplyr::bind_rows(x_list)
+
     })
+
+    res <- dplyr::bind_rows(y_list)
 
   } else {
 
@@ -133,9 +138,10 @@ stat_between_test <- function(data = NULL, x, y,
            call. = FALSE)
     }
 
-    res <- purrr::map_dfr(seq_along(y), function(y_i){
+    y_list <- lapply(seq_along(y), function(y_i){
 
-      purrr::map_dfr(seq_along(x), function(x_i){
+     x_list <- lapply(seq_along(x), function(x_i){
+
 
         stat_between_test_helper(data = NULL,
                                  x = x[[x_i]],
@@ -145,8 +151,11 @@ stat_between_test <- function(data = NULL, x, y,
                                  type = type, ...)
 
       })
+     dplyr::bind_rows(x_list)
 
     })
+
+    res <- dplyr::bind_rows(y_list)
 
   }
 
@@ -205,9 +214,9 @@ stat_cor_test <- function(x, y = NULL,
   use <- match.arg(use)
   method <- match.arg(method)
 
-  cor_res <- purrr::map(x, function(x_sg){
+  cor_res <- lapply(x, function(x_sg){
 
-    purrr::map(y, function(y_sg){
+    lapply(y, function(y_sg){
 
       temp_res <- stats::cor.test(x_sg, y_sg,
                                   alternative = alternative,
