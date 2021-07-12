@@ -9,8 +9,10 @@
 #' @param cnv_col a scalar character gives the column containing CNV values.
 #' @param sample_id_col a scalar character gives the column containing sample ID
 #' @param ref_cytoband is a GenomicRanges obeject containing the Cytoband
-#'   reference, It can be a scalar character "hg19" or "hg38", or you can
-#'   provided a self-defined GenomicRanges obeject. Default: "hg38"
+#'   reference, It can be a scalar character \code{"hg19"} or \code{"hg38"}, or
+#'   you can provided a self-defined GenomicRanges obeject. \code{"hg38"} is
+#'   derived from AnnotationHub by record id \code{"AH53178"} and \code{"hg19"}
+#'   is by record id \code{"AH53177"}. Default: \code{"hg38"}.
 #' @param filter_centromere Whether to include or exclude segments across
 #'   centromere. Default: \code{TRUE}
 #' @param cnv_mode is a scala character with values in \code{"rel"} and
@@ -33,7 +35,7 @@
 #'   \url{https://doi.org/10.1038/s41467-020-14286-0}}
 #' @examples
 #' seg_cnv <- readRDS(system.file("extdata", "run_arm_cnv_example_seg_cnv.rds",
-#' package = "yjtools"))
+#'                                package = "yjtools"))
 #' arm_cnv_res <- run_arm_cnv(seg_cnv, "CNV", "barcode")
 #' @export
 run_arm_cnv <- function(
