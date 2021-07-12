@@ -79,7 +79,7 @@ ggscale_paletteer <- function(palette = "nejm",
     all_paletteer_palette <- stringr::str_c(
       c(paletteer::palettes_d_names$package,
         paletteer::palettes_c_names$package,
-        paletteer::palettes_dynamic_names$palette),
+        paletteer::palettes_dynamic_names$package),
       c(paletteer::palettes_d_names$palette,
         paletteer::palettes_c_names$palette,
         paletteer::palettes_dynamic_names$palette),
