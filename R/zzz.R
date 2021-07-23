@@ -35,13 +35,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(
     "term", "method", "term_x", "term_y",
 
     # stat_cor_test
-    "value",
-
-    # tcga_get_cli_biotab, tcga_get_cli_indexed, tcga_get_cli_xml,
-    # tcga_remove_duplicated_samples
-    "bcr_patient_uuid", "bcr_sample_barcode", "sample_type",
-    "bcr_patient_barcode","sample_barcode", "sample_vial_barcode",
-    "submitter_id", "analyte", "plate", "portion"
+    "value"
 
   )
 )

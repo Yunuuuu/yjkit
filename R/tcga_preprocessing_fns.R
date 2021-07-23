@@ -24,51 +24,52 @@
 #'   \href{http://gdac.broadinstitute.org/runs/stddata__2014_02_15/samples_report/LAML_Replicate_Samples.html}{Replicate Samples - GDAC Firehose}
 #' @export
 tcga_remove_duplicated_samples <- function(barcode){
-  barcode_tibble <- tibble::tibble(
-    barcode = barcode
-  )
+
+  barcode_tibble <- tibble::tibble( barcode = barcode )
+
   # analyte(H, R, T)
   # plate and portion with highest lexicographical sort value
   barcode_tibble <- dplyr::mutate(
     barcode_tibble,
-    bcr_patient_barcode = stringr::str_sub(barcode, 1, 12),
-    sample_barcode = stringr::str_sub(barcode, 1, 15),
-    sample_vial_barcode = stringr::str_sub(barcode, 1, 16),
-    analyte = stringr::str_sub(barcode, 20, 20),
-    plate = stringr::str_sub(barcode, 22, 25),
-    portion = stringr::str_sub(barcode, 18, 19)
+    bcr_patient_barcode = stringr::str_sub(.data$barcode, 1, 12),
+    sample_barcode = stringr::str_sub(.data$barcode, 1, 15),
+    sample_vial_barcode = stringr::str_sub(.data$barcode, 1, 16),
+    analyte = stringr::str_sub(.data$barcode, 20, 20),
+    plate = stringr::str_sub(.data$barcode, 22, 25),
+    portion = stringr::str_sub(.data$barcode, 18, 19)
   ) %>%
-    dplyr::arrange(
-      analyte, dplyr::desc(plate), dplyr::desc(portion),
-      stringr::str_sub(sample_vial_barcode, -2, -1)
-    ) %>%
-    dplyr::group_by(sample_barcode, analyte, plate, portion) %>%
+    dplyr::group_by(.data$sample_barcode) %>%
     dplyr::mutate(
-      n = dplyr::n_distinct(
-        sample_barcode, analyte, plate, portion
-      )
+      order = order(.data$analyte, dplyr::desc(.data$plate),
+                    dplyr::desc(.data$portion),
+                    na.last = TRUE, decreasing = FALSE)
     ) %>%
-    dplyr::ungroup()
+    dplyr::add_count(
+      .data$analyte, .data$plate, .data$portion,
+      sort = FALSE, name = "n_smp"
+    )
 
-  if(any(barcode_tibble$n > 1)) {
+  if(any(barcode_tibble$n_smp > 1)) {
     warning("There remains duplicated samples after applying Firehose TCGA replicated samples preprocessing criteria", call. = FALSE)
   }
 
-  remove_duplicated_tibble <- dplyr::distinct(
-    barcode_tibble, sample_barcode,
-    .keep_all = TRUE
-  ) %>%
-    dplyr::select(
-      barcode, bcr_patient_barcode, sample_barcode, sample_vial_barcode
-    )
+  remove_duplicated_tibble <- barcode_tibble %>%
+    dplyr::slice_min(order_by = order, n = 1, with_ties = TRUE ) %>%
+    dplyr::ungroup() %>%
+    dplyr::select(dplyr::all_of(c(
+      "barcode", "bcr_patient_barcode",
+      "sample_barcode", "sample_vial_barcode"
+    )))
 
   message(
     stringr::str_c(
       "A total of",
       nrow(barcode_tibble) -  nrow(remove_duplicated_tibble),
       "samples has been removed",
-      sep = " ")
+      sep = " "),
+    appendLF = TRUE
   )
+
   remove_duplicated_tibble
 }
 
@@ -93,14 +94,14 @@ tcga_get_cli_indexed <- function(project) {
     project, type = "Biospecimen"
   )
   bio <- dplyr::mutate(
-    bio, sample_barcode = stringr::str_sub(submitter_id, 1, 15)
+    bio, sample_barcode = stringr::str_sub(.data$submitter_id, 1, 15)
   ) %>%
     dplyr::mutate(
       bcr_patient_barcode = stringr::str_sub(
-        submitter_id, 1, 12
+        .data$submitter_id, 1, 12
       )
     ) %>%
-    dplyr::rename(sample_vial_barcode = submitter_id)
+    dplyr::rename(sample_vial_barcode = dplyr::all_of("submitter_id"))
 
   replicated <- colnames(bio) %in% stringr::str_subset(
     colnames(cli),
@@ -115,9 +116,10 @@ tcga_get_cli_indexed <- function(project) {
   traits <- dplyr::full_join(
     cli, bio, by = "bcr_patient_barcode"
   ) %>%
-    dplyr::select(bcr_patient_barcode, sample_barcode,
+    dplyr::select(dplyr::all_of(c("bcr_patient_barcode", "sample_barcode")),
                   dplyr::everything()) %>%
     tibble::as_tibble()
+
 }
 
 #' download TCGA clinical data from xml files ------------------------------
@@ -154,7 +156,7 @@ tcga_get_cli_xml <- function(project, path = here::here("rawdata", "GDCdata")) {
   )
 
   for(i in c("admin","radiation","follow_up","drug","new_tumor_event")){
-    message(i)
+    message(i, appendLF = TRUE)
     cli_aux <- TCGAbiolinks::GDCprepare_clinic(
       cli_query,
       clinical.info = i,
@@ -204,12 +206,13 @@ tcga_get_cli_xml <- function(project, path = here::here("rawdata", "GDCdata")) {
     directory = path
   )
   biospecimen <- dplyr::select(
-    biospecimen, bcr_patient_barcode, bcr_sample_barcode, sample_type
+    dplyr::all_of(c("biospecimen", "bcr_patient_barcode",
+                    "bcr_sample_barcode", "sample_type"))
   ) %>%
     dplyr::mutate(
-      sample_barcode = stringr::str_sub(bcr_sample_barcode, 1, 15)
+      sample_barcode = stringr::str_sub(.data$bcr_sample_barcode, 1, 15)
     ) %>%
-    dplyr::rename(sample_vial_barcode = bcr_sample_barcode)
+    dplyr::rename(sample_vial_barcode = dplyr::all_of("bcr_sample_barcode"))
 
   biospecimen <- unique(biospecimen) %>% tibble::as_tibble()
 
@@ -220,9 +223,9 @@ tcga_get_cli_xml <- function(project, path = here::here("rawdata", "GDCdata")) {
     clinical, biospecimen, by = "bcr_patient_barcode"
   ) %>%
     dplyr::select(
-      bcr_patient_barcode,
-      sample_barcode,
-      sample_vial_barcode,
+      dplyr::all_of(c("bcr_patient_barcode",
+                      "sample_barcode",
+                      "sample_vial_barcode")),
       dplyr::everything()
     )
 }
@@ -268,10 +271,11 @@ tcga_get_cli_biotab <- function(project, path = here::here("rawdata", "GDCdata")
       negate = TRUE
     )
   ){
-    message(i)
+    message(i, appendLF = TRUE)
     cli_aux <- clinical.BCRtab.all[[i]]
     cli_aux_test <- dplyr::filter(
-      cli_aux, !(bcr_patient_uuid %in% c("bcr_patient_uuid", "CDE_ID:"))
+      cli_aux,
+      !(.data$bcr_patient_uuid %in% c("bcr_patient_uuid", "CDE_ID:"))
     )
     if(is.null(cli_aux_test) || nrow(cli_aux_test) == 0) next
 
@@ -311,8 +315,7 @@ tcga_get_cli_biotab <- function(project, path = here::here("rawdata", "GDCdata")
   )
 
   biospecimen.BCRtab.all <- TCGAbiolinks::GDCprepare(
-    bio_query,
-    directory = path
+    bio_query, directory = path
   )
 
   biospecimen <- biospecimen.BCRtab.all[[ stringr::str_c(
@@ -322,12 +325,14 @@ tcga_get_cli_biotab <- function(project, path = here::here("rawdata", "GDCdata")
   ) ]]
 
   biospecimen <- dplyr::select(
-    biospecimen, bcr_patient_uuid, bcr_sample_barcode, sample_type
+    dplyr::all_of(c(
+      "biospecimen", "bcr_patient_uuid", "bcr_sample_barcode", "sample_type"
+    ))
   ) %>%
     dplyr::mutate(
-      sample_barcode = stringr::str_sub(bcr_sample_barcode, 1, 15)
+      sample_barcode = stringr::str_sub(.data$bcr_sample_barcode, 1, 15)
     ) %>%
-    dplyr::rename(sample_vial_barcode = bcr_sample_barcode)
+    dplyr::rename(sample_vial_barcode = dplyr::all_of("bcr_sample_barcode"))
 
   biospecimen <- unique(biospecimen) %>% tibble::as_tibble()
 
@@ -338,10 +343,10 @@ tcga_get_cli_biotab <- function(project, path = here::here("rawdata", "GDCdata")
     clinical ,biospecimen, by = "bcr_patient_uuid"
   ) %>%
     dplyr::select(
-      bcr_patient_uuid,
-      bcr_patient_barcode,
-      sample_barcode,
-      sample_vial_barcode,
+      dplyr::all_of(c("bcr_patient_uuid",
+                      "bcr_patient_barcode",
+                      "sample_barcode",
+                      "sample_vial_barcode")),
       dplyr::everything()
     )
 }
