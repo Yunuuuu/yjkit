@@ -27,6 +27,7 @@ Suggests:
   glue,
   matrixStats,
   methods,
+  BiocManager,
   vctrs,
   e1071, 
   paletteer,

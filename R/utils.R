@@ -25,3 +25,28 @@ format_num <- function(x){
 }
 
 
+#' Install or update Bioconductor, CRAN and GitHub packages
+#'
+#' Install or update CRAN, Bioconductor and GitHub packages from source and
+#' compiling
+#' @inheritParams BiocManager::install
+install_pkgs <- function(pkgs = character(), ..., type = "source",
+                    INSTALL_opts = "--byte-compile",
+                    site_repository  = character(),
+                    update = TRUE, ask = TRUE,
+                    checkBuilt = FALSE){
+
+  if (!requireNamespace("BiocManager", quietly = TRUE)){
+    stop("BiocManager needed for this function to work. Please install it",
+         call. = FALSE)
+  }
+
+  BiocManager::install(
+    pkgs = pkgs, type = type,
+    INSTALL_opts = INSTALL_opts, ...,
+    site_repository = site_repository,
+    update = update, ask = ask,
+    checkBuilt = checkBuilt
+  )
+
+}
