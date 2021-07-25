@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{install_pkgs}
 \alias{install_pkgs}
-\title{Install or update Bioconductor, CRAN and GitHub packages}
+\title{Install or update CRAN, Bioconductor and GitHub packages}
 \usage{
 install_pkgs(
   pkgs = character(),
@@ -45,7 +45,55 @@ unless \code{ask = FALSE}).}
 earlier major.minor version of R (e.g., 3.4) is considered to
 be old.}
 }
+\value{
+\code{BiocManager::install()} returns the \code{pkgs} argument, invisibly.
+}
 \description{
 Install or update CRAN, Bioconductor and GitHub packages from source and
-compiling
+compiling packages
+}
+\details{
+Installation of \emph{Bioconductor} and CRAN packages use R's standard
+functions for library management -- \code{install.packages()},
+\code{available.packages()}, \code{update.packages()}. Installation of GitHub
+packages uses the \code{remotes::install_github()}.
+
+When installing CRAN or \emph{Bioconductor} packages, typical arguments
+include: \code{lib.loc}, passed to \verb{\\link{old.packages}()} and used to
+determine the library location of installed packages to be updated;
+and \code{lib}, passed to \verb{\\link{install.packages}()} to determine the
+library location where \code{pkgs} are to be installed.
+
+When installing GitHub packages, \code{...} is passed to the
+\pkg{remotes} package functions \verb{\\link[remotes]{install_github}()}
+and \code{remotes:::install()}. A typical use is to build vignettes, via
+\verb{dependencies=TRUE, build_vignettes=TRUE}.
+
+See \code{?repositories} for additional detail on customizing where
+BiocManager searches for package installation.
+
+\env{BIOCONDUCTOR_ONLINE_VERSION_DIAGNOSIS} is an environment
+variable or global \code{options()} which, when set to \code{FALSE}, avoids
+the R and \emph{Bioconductor} version checks that are done by querying
+an online configuration file. Setting
+\env{BIOCONDUCTOR_ONLINE_VERSION_DIAGNOSIS} to \code{FALSE} can speed
+package loading when internet access is slow or non-existent, but
+may result in out-of-date information about the current release and
+development versions of \emph{Bioconductor}.
+}
+\seealso{
+\verb{BiocManager::\\link{repositories}()} returns the \emph{Bioconductor} and
+CRAN repositories used by \code{install()}.
+
+\verb{\\link{install.packages}()} installs the packages themselves (used by
+\code{BiocManager::install} internally).
+
+\verb{\\link{update.packages}()} updates all installed packages (used by
+\code{BiocManager::install} internally).
+
+\verb{\\link{chooseBioCmirror}()} allows choice of a mirror from all
+public \emph{Bioconductor} mirrors.
+
+\verb{\\link{chooseCRANmirror}()} allows choice of a mirror from all
+public CRAN mirrors.
 }
