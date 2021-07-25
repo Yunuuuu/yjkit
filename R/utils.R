@@ -33,6 +33,7 @@ format_num <- function(x){
 #' @inherit BiocManager::install details
 #' @inherit BiocManager::install return
 #' @inherit BiocManager::install seealso
+#' @export
 install_pkgs <- function(pkgs = character(), ..., type = "source",
                     INSTALL_opts = "--byte-compile",
                     site_repository  = character(),
