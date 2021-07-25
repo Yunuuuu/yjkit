@@ -31,8 +31,9 @@ format_num <- function(x){
 #' compiling packages
 #' @inheritParams BiocManager::install
 #' @inherit BiocManager::install details
-#' @inherit BiocManager::install return
-#' @inherit BiocManager::install seealso
+#' @return  return the pkgs argument invisibly.
+#' @seealso \code{\link[BiocManager]{install}} and
+#'   \code{\link[utils]{install.packages}}
 #' @export
 install_pkgs <- function(pkgs = character(), ..., type = "source",
                     INSTALL_opts = "--byte-compile",
@@ -53,6 +54,6 @@ install_pkgs <- function(pkgs = character(), ..., type = "source",
     checkBuilt = checkBuilt
   )
 
-  pkgs
+  invisible(pkgs)
 
 }

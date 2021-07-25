@@ -46,7 +46,7 @@ earlier major.minor version of R (e.g., 3.4) is considered to
 be old.}
 }
 \value{
-\code{BiocManager::install()} returns the \code{pkgs} argument, invisibly.
+return the pkgs argument invisibly.
 }
 \description{
 Install or update CRAN, Bioconductor and GitHub packages from source and
@@ -82,18 +82,6 @@ may result in out-of-date information about the current release and
 development versions of \emph{Bioconductor}.
 }
 \seealso{
-\verb{BiocManager::\\link{repositories}()} returns the \emph{Bioconductor} and
-CRAN repositories used by \code{install()}.
-
-\verb{\\link{install.packages}()} installs the packages themselves (used by
-\code{BiocManager::install} internally).
-
-\verb{\\link{update.packages}()} updates all installed packages (used by
-\code{BiocManager::install} internally).
-
-\verb{\\link{chooseBioCmirror}()} allows choice of a mirror from all
-public \emph{Bioconductor} mirrors.
-
-\verb{\\link{chooseCRANmirror}()} allows choice of a mirror from all
-public CRAN mirrors.
+\code{\link[BiocManager]{install}} and
+\code{\link[utils]{install.packages}}
 }
