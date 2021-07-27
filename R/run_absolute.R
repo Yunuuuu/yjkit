@@ -516,6 +516,8 @@ run_absolute_prepare_seg_and_maf_data <- function(seg, maf = NULL, temp_dir){
 
   }
 
+  if (is.null(maf)) .maf_filepath. <- NULL
+
   list(
     sample_id = .sample_id.,
     seg = .seg_filepath.,
