@@ -164,7 +164,7 @@ run_absolute <- function(
 
         suppressPackageStartupMessages( loadNamespace("ABSOLUTE") )
 
-        if (is.na(maf_filepath[[i]])) {
+        if (is.null(maf_filepath) || is.na(maf_filepath[[i]])) {
           maf_fn <- NULL
         } else {
           maf_fn <- maf_filepath[[i]]
