@@ -108,7 +108,7 @@ run_absolute <- function(
          call. = FALSE)
   }
 
-  if (verbose) message("Setting results directory as",
+  if (verbose) message("Setting results directory as ",
                        results_dir, appendLF = TRUE)
   dir_create2(results_dir)
 
@@ -468,6 +468,7 @@ run_absolute_validate_seg_and_maf_data <- function(seg, maf = NULL){
 
 run_absolute_prepare_seg_and_maf_data <- function(seg, maf = NULL, temp_dir){
 
+  if (!"Sample" %in% names(seg)) seg$Sample <- "SampleOne"
   .sample_id. <- unique( seg$Sample )
 
   if (any(is.na(.sample_id.))){
