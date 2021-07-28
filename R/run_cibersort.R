@@ -162,7 +162,11 @@ run_cibersort <- function(mixture_data, sig_data = NULL,
     #anti-log if max < 50 in mixture file
     # if(max(Y) < 50) {Y <- 2^Y} # CIBERSORT implication
 
-    if(check_logged(Y)) {Y <- 2^Y} # GEO implication
+    if(check_logged(Y)) {
+        message("find mixture_data is logged, we'll anti-log by ",
+                "2^mixture_data!", appendLF = TRUE)
+        Y <- 2^Y
+    } # GEO implication
 
     #quantile normalization of mixture file
     if(quantile_norm == TRUE){
