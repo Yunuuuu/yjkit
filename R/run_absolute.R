@@ -22,8 +22,9 @@
 #'   More detail about how to analyze ABSOLUTE results please see
 #'   \href{https://www.genepattern.org/analyzing-absolute-data}{analyzing-absolute-data}.
 #'
-#' @param seg a \code{data.frame} containing columns "Sample", "Chromosome",
-#'   "Start", "End", "Num_Probes", "Segment_Mean".
+#' @param seg a \code{data.frame} containing columns "Chromosome", "Start",
+#'   "End", "Num_Probes", "Segment_Mean". If providing multiple samples, seg
+#'   should contain a column "Sample" to identify different samples
 #' @param maf MAF, default is \code{NULL}, can provided as \code{data.frame}.
 #' @param sigma_p Provisional value of excess sample level variance used for
 #'   mode search. Default: \code{0}
@@ -99,10 +100,12 @@ run_absolute <- function(
          'repos = NULL, type = "source") ', "firstly.",
          call. = FALSE)
   }
+
   if (!requireNamespace("data.table", quietly = TRUE)){
     stop("data.table needed for this function to work. Please install it",
          call. = FALSE)
   }
+
   if (!requireNamespace("BiocParallel", quietly = TRUE)){
     stop("BiocParallel needed for this function to work. Please install it",
          call. = FALSE)
@@ -361,6 +364,8 @@ run_absolute_validate_seg_and_maf_data <- function(seg, maf = NULL){
 
   seg <- data.table::as.data.table(seg)
 
+  if (!"Sample" %in% names(seg)) seg[, Sample := "SampleOne"]
+
   # check seg data
   seg_cols <- c("Sample", "Chromosome", "Start", "End", "Num_Probes", "Segment_Mean")
 
@@ -468,7 +473,6 @@ run_absolute_validate_seg_and_maf_data <- function(seg, maf = NULL){
 
 run_absolute_prepare_seg_and_maf_data <- function(seg, maf = NULL, temp_dir){
 
-  if (!"Sample" %in% names(seg)) seg$Sample <- "SampleOne"
   .sample_id. <- unique( seg$Sample )
 
   if (any(is.na(.sample_id.))){
@@ -497,6 +501,8 @@ run_absolute_prepare_seg_and_maf_data <- function(seg, maf = NULL, temp_dir){
 
   # prepare maf data
 
+  if (is.null(maf)) .maf_filepath. <- NULL
+
   if (!is.null(maf)){
 
     maf <- maf[Tumor_Sample_Barcode %in% .sample_id., ]
@@ -516,8 +522,6 @@ run_absolute_prepare_seg_and_maf_data <- function(seg, maf = NULL, temp_dir){
     ), by = .group_col.]
 
   }
-
-  if (is.null(maf)) .maf_filepath. <- NULL
 
   list(
     sample_id = .sample_id.,

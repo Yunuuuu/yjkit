@@ -52,7 +52,7 @@
 #'   type in the signature matrix, such that the sum of all fractions is equal
 #'   to 1 for a given mixture sample. The inspection of log transformation is
 #'   based on \href{https://www.ncbi.nlm.nih.gov/geo/geo2r/}{GEO2R} while the
-#'   raw implication is just based on \code{if(max(mixture_matrix) < 50)}.
+#'   raw implementation is just based on \code{if(max(mixture_matrix) < 50)}.
 #'
 #'   CIBERSORT can also be used to produce a score that quantitatively measures
 #'   the overall abundance of each cell type (as described in
