@@ -37,10 +37,16 @@ ggscale_paletteer <- function(palette = "nejm",
                               direction = 1,
                               ...){
 
+  if (!requireNamespace("paletteer", quietly = TRUE)){
+    stop("paletteer needed for this function to work. Please install it",
+         call. = FALSE)
+  }
+
   if (!rlang::is_scalar_character(scale)){
 
-    warning(paste0("scale should be a scalar character, ",
-                   "we'll take the first one and as.character"))
+    warning("scale should be a scalar character, ",
+            "we'll take the first one and as.character",
+            call. = FALSE)
     scale <- as.character(scale)[[1]]
 
   }
@@ -70,12 +76,6 @@ ggscale_paletteer <- function(palette = "nejm",
       binned = "binned"
     )
 
-    palette_fn <- rlang::eval_tidy( rlang::call2(
-      "::", rlang::expr(paletteer), rlang::sym(
-        stringr::str_c("scale_", scale, "_paletteer_", type)
-      )
-    ) )
-
     all_paletteer_palette <- stringr::str_c(
       c(paletteer::palettes_d_names$package,
         paletteer::palettes_c_names$package,
@@ -91,26 +91,31 @@ ggscale_paletteer <- function(palette = "nejm",
       pattern = stringr::str_c("ggsci::.*", palette, sep = "")
     )
 
-    if (length(ggsci_palette) > 0) {
+    if (length(ggsci_palette) > 0 || palette %in% all_paletteer_palette){
 
-      if (length(ggsci_palette) > 1) {
-        warning("more than one ggsci palette found, we'll take the first one")
-        palette <- ggsci_palette[[1]]
-      } else {
-        palette <- ggsci_palette
+      if (length(ggsci_palette) > 0) {
+
+        if (length(ggsci_palette) > 1) {
+          warning("more than one ggsci palette found, we'll take the first one", call. = FALSE)
+          palette <- ggsci_palette[[1]]
+        } else {
+          palette <- ggsci_palette
+        }
+
       }
 
-      return(palette_fn(palette = palette,
-                        direction = direction,
-                        ...))
+      palette_args <- list(palette = palette,
+                           direction = direction,
+                           ...)
 
-    } else if ( palette %in% all_paletteer_palette ){
-
-      return(palette_fn(palette = palette,
-                        direction = direction,
-                        ...))
+      palette_fn <- rlang::call2(
+        stringr::str_c("scale_", scale, "_paletteer_", type),
+        !!!palette_args,
+        .ns = "paletteer"
+      )
 
     }
+
   }
 
   if (direction == -1) palette <- rev(palette)

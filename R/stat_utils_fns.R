@@ -230,10 +230,10 @@ stat_cor_test <- function(x, y = NULL,
         p.value = temp_res$p.value
       )
     }) %>% tibble::enframe(name = "y", value = "value") %>%
-      tidyr::unnest(cols = value)
+      tidyr::unnest(cols = dplyr::all_of("value"))
 
   }) %>% tibble::enframe(name = "x", value = "value") %>%
-    tidyr::unnest(cols = value)
+    tidyr::unnest(cols = dplyr::all_of("value"))
 
   cor_res
 
@@ -349,9 +349,7 @@ stat_between_test_helper <- function(data = NULL, x, y,
     if (!is.numeric(y)) stop("y should be a numeric vector but not a type of ",
                              typeof(y), call. = FALSE)
 
-    test_data <- tibble::tibble(
-      ..x = x, ..y = y
-    )
+    test_data <- tibble::tibble( ..x = x, ..y = y )
 
   }
 
@@ -372,26 +370,27 @@ stat_between_test_helper <- function(data = NULL, x, y,
 
   }
 
-  test_fn <- rlang::call2(
-    "::", rlang::expr(stats), rlang::sym(test_method)
+  test_expr <- rlang::call2(
+    test_method,
+    ..y ~ ..x, data = test_data, !!!arg_dots,
+    .ns = "stats"
   )
 
-  test_res <- rlang::expr(
-    (!!test_fn)(..y ~ ..x, data = test_data, !!!arg_dots)
-  )
-
-  test_res <- broom::tidy( rlang::eval_tidy(test_res) )
+  test_res <- broom::tidy( rlang::eval_tidy(test_expr) )
 
   if (test_method == "aov") {
     test_res <- test_res %>%
-      dplyr::filter(term == "..x") %>%
-      dplyr::select(!term)
+      dplyr::filter(.data$term == "..x") %>%
+      dplyr::select(!dplyr::all_of("term"))
   }
   test_res <- test_res %>%
     dplyr::mutate(method = !!test_method,
-                  term_y = y_label,
-                  term_x = x_label) %>%
-    dplyr::relocate(method, term_y, term_x, .before = 1)
+                  term_y = !!y_label,
+                  term_x = !!x_label) %>%
+    dplyr::relocate(dplyr::all_of("method"),
+                    dplyr::all_of("term_y"),
+                    dplyr::all_of("term_x"),
+                    .before = 1)
 
   if (test_method %in% c("aov", "kruskal.test")) {
     names(test_res$statistic) <- switch(

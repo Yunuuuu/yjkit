@@ -338,15 +338,15 @@ seg_to_arm_cnv <- function(
         arm_cytoband[ S4Vectors::subjectHits(overlap_hits) ]
       )[["arm_width"]],
 
-      seg_length_frac = width / arm_width
+      seg_length_frac = .data$width / .data$arm_width
 
     ) %>%
-    dplyr::group_by(seqnames, arm)
+    dplyr::group_by(.data$seqnames, .data$arm)
 
   if (cnv_mode == "rel") res <- res %>%
     dplyr::summarize(
       arm_cnv = as.integer(
-        sum(CNV * seg_length_frac, na.rm = TRUE) > !!threshold
+        sum(.data$CNV * .data$seg_length_frac, na.rm = TRUE) > !!threshold
       )
     )
 
@@ -354,7 +354,7 @@ seg_to_arm_cnv <- function(
     dplyr::summarize(
       arm_cnv = as.integer(sign(
         round(matrixStats::weightedMedian(
-          CNV, w = width
+          .data$CNV, w = .data$width
         ), digits = 0) - round(!!ploidy, digits = 0)
       ))
     )

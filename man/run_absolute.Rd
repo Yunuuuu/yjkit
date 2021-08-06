@@ -24,8 +24,9 @@ run_absolute(
 )
 }
 \arguments{
-\item{seg}{a \code{data.frame} containing columns "Sample", "Chromosome",
-"Start", "End", "Num_Probes", "Segment_Mean".}
+\item{seg}{a \code{data.frame} containing columns "Chromosome", "Start",
+"End", "Num_Probes", "Segment_Mean". If providing multiple samples, seg
+should contain a column "Sample" to identify different samples}
 
 \item{maf}{MAF, default is \code{NULL}, can provided as \code{data.frame}.}
 

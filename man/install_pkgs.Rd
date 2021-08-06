@@ -9,7 +9,7 @@ install_pkgs(
   ...,
   type = "source",
   INSTALL_opts = "--byte-compile",
-  site_repository = character(),
+  repos = character(),
   update = TRUE,
   ask = TRUE,
   checkBuilt = FALSE
@@ -24,11 +24,20 @@ treated as GitHub repositories and installed using
 
 \item{...}{Additional arguments used by \code{install.packages()}.}
 
-\item{site_repository}{(Optional) \code{character(1)} vector
-representing an additional repository in which to look for
-packages to install. This repository will be prepended to the
-default repositories (which you can see with
-\verb{BiocManager::\\link{repositories}()}).}
+\item{type}{character, indicating the type of package to download and
+install. Will be "\code{source}" except on Windows and some macOS builds:
+see the section on ‘Binary packages’ for those.}
+
+\item{INSTALL_opts}{an optional character vector of additional option(s) to
+be passed to \code{R CMD INSTALL} for a source package install. E.g.,
+\code{c("--html", "--no-multiarch", "--no-test-load")}. \cr Can also be a
+named list of character vectors to be used as additional options, with
+names the respective package names.}
+
+\item{repos}{(Optional) character(1) vector representing an additional
+repository in which to look for packages to install. This repository will
+be prepended to the default repositories (which you can see with
+\code{BiocManager::\link[BiocManager]{repositories}}.}
 
 \item{update}{\code{logical(1)}. When \code{FALSE}, \code{BiocManager::install()}
 does not attempt to update old packages. When \code{TRUE}, update
