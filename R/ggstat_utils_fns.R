@@ -194,6 +194,8 @@ gganno_cor_test <- function(data, mapping = NULL,
 #'
 #' This function Creates an ggplot2 object with annotation.
 #'
+#' @param geom character Name of geom to use for annotation. Can be one of
+#'   \code{"text"} and \code{"label"}.
 #' @param label the character which will be added to the plot, will be connected
 #'   by \code{paste(names(label), label, collapse = label_sep, sep = ": ")}
 #' @param format_label if \code{TRUE}, numeric label will be formatted by
@@ -217,7 +219,7 @@ gganno_cor_test <- function(data, mapping = NULL,
 # @examples
 #   ggstat_anno(label = "a", label_position = c(0.5, 0.5))
 #' @author Yun \email{yunyunpp96@@outlook.com}
-ggstat_anno_helper <- function(label, format_label = TRUE,
+ggstat_anno_helper <- function(geom, label, format_label = TRUE,
                                label_position = c(0.02, 0.98),
                                label_justification = c(0, 1),
                                label_sep = NULL,
@@ -244,8 +246,7 @@ ggstat_anno_helper <- function(label, format_label = TRUE,
   label <- stringr::str_c(names(label), label_format, sep = ": ",
                           collapse = label_sep)
 
-  ggannotate_npc(geom = "text",
-                 label = label,
+  ggannotate_npc(geom = geom, label = label,
                  label_position = label_position,
                  label_justification,
                  ...)

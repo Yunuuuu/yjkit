@@ -5,6 +5,7 @@
 \title{Create an annotation layer with text annotation}
 \usage{
 ggstat_anno_helper(
+  geom,
   label,
   format_label = TRUE,
   label_position = c(0.02, 0.98),
@@ -14,6 +15,9 @@ ggstat_anno_helper(
 )
 }
 \arguments{
+\item{geom}{character Name of geom to use for annotation. Can be one of
+\code{"text"} and \code{"label"}.}
+
 \item{label}{the character which will be added to the plot, will be connected
 by \code{paste(names(label), label, collapse = label_sep, sep = ": ")}}
 
