@@ -33,8 +33,8 @@
 #' @details if \code{type = "nonparametric"}, \code{\link[stats]{wilcox.test}}
 #'   or \code{\link[stats]{kruskal.test}} is used. \cr if \code{type =
 #'   "parametric"}, \code{\link[stats]{t.test}} or \code{\link[stats]{aov}} is
-#'   used.\cr which method is used depends on the unique values of \code{x term}
-#'   in \code{data}
+#'   used.\cr The final choice of which method is used depends on the unique
+#'   values of \code{x} term.
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @examples
 #'   stat_between_test(mtcars, factor(vs), mpg, type = "p")
@@ -92,20 +92,20 @@ stat_between_test <- function(data = NULL, x, y,
 
     } else if (is.list(x)){
 
+      if (!all(vapply(x, function(x) is.character(x) || is.factor(x), logical(1)))) {
+        stop("x should be a character or a factor or a list ",
+             "of character or factor vector with same length.",                             call. = FALSE)
+      }
+
       label_list_x <- names(x)
 
     } else {
-      stop("unsupported type of x, ",
+      stop("unsupported type of ", typeof(x), " x, ",
            "x should be a character or a factor or a list ",
            "of character or factor vector with same length.",
            call. = FALSE)
     }
 
-    if (
-      !all(vapply(x, function(x) is.character(x) || is.factor(x), logical(1)))
-    ) stop("x should be a character or a factor or a list ",
-           "of character or factor vector with same length.",
-           call. = FALSE)
 
     # check the right type of y
     if (is.numeric(y)) {
@@ -115,20 +115,20 @@ stat_between_test <- function(data = NULL, x, y,
 
     } else if (is.list(y)){
 
+      if (!all(vapply(y, is.numeric, logical(1)))) {
+        stop("y should be a numeric vector or a list ",
+             "of numeric vector with same length.",
+             call. = FALSE)
+      }
+
       label_list_y <- names(y)
 
     } else {
-      stop("unsupported type of y, ",
+      stop("unsupported type of ", typeof(y), " y, ",
            "y should be a numeric vector or a list ",
            "of numeric vector with same length.",
            call. = FALSE)
     }
-
-    if (
-      !all(vapply(y, is.numeric, logical(1)))
-    ) stop("y should be a numeric vector or a list ",
-           "of numeric vector with same length.",
-           call. = FALSE)
 
     # check the same length of x and y
     if(!identical(
@@ -175,7 +175,7 @@ stat_between_test <- function(data = NULL, x, y,
 #'   abbreviation of) one of the strings \code{"everything"}, \code{"all.obs"},
 #'   \code{"complete.obs"}, \code{"na.or.complete"}, or
 #'   \code{"pairwise.complete.obs"}. Default: \code{"pairwise.complete.obs"}.
-#'   See \code{\link[stats]{cor}}
+#'   See \code{\link[stats]{cor}}.
 #' @param method a character string indicating which correlation coefficient (or
 #'   covariance) is to be computed. One of \code{"pearson"}, \code{"kendall"},
 #'   or \code{"spearman"}, can be abbreviated. Default: \code{"spearman"}
@@ -186,13 +186,14 @@ stat_between_test <- function(data = NULL, x, y,
 #' @param exact a logical indicating whether an exact p-value should be
 #'   computed. Used for Kendall's tau and Spearman's rho. See
 #'   \code{\link[stats]{cor.test}}. Default: \code{TRUE}.
-#' @param conf_level confidence level for the returned confidence interval.
-#'   Currently only used for the Pearson product moment correlation coefficient
-#'   if there are at least 4 complete pairs of observations.
-#' @param ... Other parameters for \code{\link[stats]{cor.test}}
+#' @param cor_test a logical value indicates whether the estimation of P-value
+#'   should use \code{\link[stats]{cor.test}} instead. If FALSE, the estimation
+#'   of P-value will use [stats::pt()] (for spearman or pearson) or
+#'   [stats::pnorm()] (for kendall). Default: \code{FALSE}.
+#' @param ... Other parameters passed to \code{\link[stats]{cor.test}}.
 #' @return a tibble of the Correlation results. (see
-#'   \code{\link[stats]{cor.test}})
-#' @details See \code{\link[stats]{cor.test}}
+#'   \code{\link[stats]{cor.test}}).
+#' @details See \code{\link[stats]{cor.test}} and \code{\link[stats]{cor}}.
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @examples
 #'   stat_cor_test(mtcars)
@@ -203,40 +204,134 @@ stat_cor_test <- function(x, y = NULL,
                                   "na.or.complete"),
                           method = c("spearman", "pearson", "kendall"),
                           alternative = c("two.sided", "less", "greater"),
-                          exact = TRUE,
-                          conf_level = 0.95, ...){
-
-  if(is.null(y)) y <- x
+                          exact = TRUE, cor_test = FALSE,
+                          ...){
 
   stopifnot(inherits(x, "data.frame"))
-  stopifnot(inherits(y, "data.frame"))
+  if (!rlang::is_scalar_logical(cor_test)) {
+    stop("Argument cor_test should be a scalar logical value.",
+         call. = FALSE)
+  }
+  if(is.null(y)){
+    y <- x
+  } else {
+    stopifnot(inherits(y, "data.frame"))
+  }
 
   use <- match.arg(use)
   method <- match.arg(method)
+  alternative <- match.arg(alternative)
 
-  cor_res <- lapply(x, function(x_sg){
+  cor_name <- switch (method,
+                      pearson = "cor",
+                      kendall= "tau",
+                      spearman = "rho")
 
-    lapply(y, function(y_sg){
+  if (cor_test) { # too slowly for large data
 
-      temp_res <- stats::cor.test(x_sg, y_sg,
-                                  alternative = alternative,
-                                  method = method,
-                                  exact = exact,
-                                  conf.level = conf_level,
-                                  ...)
+    res <- lapply(x, function(x_sg){
 
-      tibble::tibble(
-        !!names(temp_res$estimate) := temp_res$estimate,
-        p.value = temp_res$p.value
-      )
-    }) %>% tibble::enframe(name = "y", value = "value") %>%
+      lapply(y, function(y_sg){
+
+        temp_res <- stats::cor.test(x_sg, y_sg,
+                                    alternative = alternative,
+                                    method = method,
+                                    exact = exact,
+                                    ...)
+
+        tibble::tibble(
+          !!cor_name := temp_res$estimate,
+          pvalue = temp_res$p.value
+        )
+
+      }) %>% tibble::enframe(name = "y", value = "value") %>%
+        tidyr::unnest(cols = dplyr::all_of("value"))
+
+    }) %>% tibble::enframe(name = "x", value = "value") %>%
       tidyr::unnest(cols = dplyr::all_of("value"))
 
-  }) %>% tibble::enframe(name = "x", value = "value") %>%
-    tidyr::unnest(cols = dplyr::all_of("value"))
+    res[[cor_name]] <- unname(res[[cor_name]])
+    res
 
-  cor_res
+  }
 
+  cor_res <- stats::cor(x, y, use = use, method = method) %>%
+    tibble::as_tibble(rownames = ".x.") %>%
+    tidyr::pivot_longer(cols = !dplyr::all_of(".x."),
+                        names_to = ".y.",
+                        values_to = "cor") %>%
+    rlang::set_names(nm = c("x", "y", cor_name))
+
+  if (identical(use, "pairwise.complete.obs")){
+
+    x_matrix <- as.matrix(x)
+    y_matrix <- as.matrix(y)
+    n_matrix <- t(!is.na(x_matrix)) %*% (!is.na(y_matrix))
+    n <- n_matrix[as.matrix(cor_res[c("x", "y")])]
+
+  } else if (identical(use, "complete.obs")||identical(use, "na.or.complete")){
+
+    bind_x_and_y <- dplyr::filter(
+      cbind(x, y),
+      dplyr::if_all(.cols = dplyr::everything(), ~!is.na(.x))
+    )
+    n <- nrow(bind_x_and_y)
+
+  } else {
+    n <- nrow(x)
+  }
+
+  res <- dplyr::mutate(
+    cor_res, pvalue = cor_to_p(
+      .data[[cor_name]], n = !!n, method = !!method,
+      alternative = !!alternative
+    )
+  )
+
+  res
+
+}
+
+# transform correlation coefficient to P-value
+cor_to_p <- function(cor, n, method, alternative){
+
+  method <- match.arg(method, c("spearman", "pearson", "kendall"))
+  alternative <- match.arg(alternative, c("two.sided", "less", "greater"))
+
+  if (identical(method, "kendall")) {
+    warning("Estimation of P-value for Kendall's correlation ",
+            "is not perfectly correct. Please try cor_test = TRUE.",
+            call. = FALSE)
+    statistic <- (3 * cor * sqrt(n * (n - 1)))/sqrt(2 * (2 * n + 5))
+    p_fn <- "pnorm"
+  } else {
+    statistic <- cor * sqrt((n - 2)/(1 - cor^2))
+    p_fn <- "pt"
+  }
+
+  if (!identical(alternative, "greater")) {
+    lower.tail <- TRUE
+  } else {
+    lower.tail <- FALSE
+  }
+
+  if (identical(alternative, "two.sided")) statistic <- -abs(statistic)
+
+  p_expr <- rlang::call2( p_fn, q = statistic,
+                          lower.tail = lower.tail,
+                          .ns = "stats" )
+
+  if (!identical(method, "kendall")) {
+
+    p_expr <- rlang::call_modify(p_expr, df = n - 2)
+
+  }
+
+  p <- rlang::eval_tidy(p_expr)
+
+  if (identical(alternative, "two.sided")) p <- 2 * p
+
+  p
 }
 
 #' Proportional Hazards Regression Model analysis
