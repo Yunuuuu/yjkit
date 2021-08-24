@@ -12,7 +12,7 @@ stat_cor_test(
   method = c("spearman", "pearson", "kendall"),
   alternative = c("two.sided", "less", "greater"),
   exact = TRUE,
-  conf_level = 0.95,
+  cor_test = FALSE,
   ...
 )
 }
@@ -24,7 +24,7 @@ covariances in the presence of missing values. This must be (an
 abbreviation of) one of the strings \code{"everything"}, \code{"all.obs"},
 \code{"complete.obs"}, \code{"na.or.complete"}, or
 \code{"pairwise.complete.obs"}. Default: \code{"pairwise.complete.obs"}.
-See \code{\link[stats]{cor}}}
+See \code{\link[stats]{cor}}.}
 
 \item{method}{a character string indicating which correlation coefficient (or
 covariance) is to be computed. One of \code{"pearson"}, \code{"kendall"},
@@ -39,15 +39,16 @@ the initial letter. \code{"greater"} corresponds to positive association,
 computed. Used for Kendall's tau and Spearman's rho. See
 \code{\link[stats]{cor.test}}. Default: \code{TRUE}.}
 
-\item{conf_level}{confidence level for the returned confidence interval.
-Currently only used for the Pearson product moment correlation coefficient
-if there are at least 4 complete pairs of observations.}
+\item{cor_test}{a logical value indicates whether the estimation of P-value
+should use \code{\link[stats]{cor.test}} instead. If FALSE, the estimation
+of P-value will use \code{\link[stats:TDist]{stats::pt()}} (for spearman or pearson) or
+\code{\link[stats:Normal]{stats::pnorm()}} (for kendall). Default: \code{FALSE}.}
 
-\item{...}{Other parameters for \code{\link[stats]{cor.test}}}
+\item{...}{Other parameters passed to \code{\link[stats]{cor.test}}.}
 }
 \value{
 a tibble of the Correlation results. (see
-\code{\link[stats]{cor.test}})
+\code{\link[stats]{cor.test}}).
 }
 \description{
 Function to calculate Correlation coefficient and P-value between the columns
@@ -55,7 +56,7 @@ of x and the columns of y, using one of Pearson's product moment correlation
 coefficient, Kendall's tau or Spearman's rho.
 }
 \details{
-See \code{\link[stats]{cor.test}}
+See \code{\link[stats]{cor.test}} and \code{\link[stats]{cor}}.
 }
 \examples{
   stat_cor_test(mtcars)

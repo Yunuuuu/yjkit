@@ -44,8 +44,8 @@ nonparametric tests.
 if \code{type = "nonparametric"}, \code{\link[stats]{wilcox.test}}
 or \code{\link[stats]{kruskal.test}} is used. \cr if \code{type =
   "parametric"}, \code{\link[stats]{t.test}} or \code{\link[stats]{aov}} is
-used.\cr which method is used depends on the unique values of \code{x term}
-in \code{data}
+used.\cr The final choice of which method is used depends on the unique
+values of \code{x} term.
 }
 \section{Quasiquotation}{
  if \code{data} supplied, \code{x} and \code{y} in
