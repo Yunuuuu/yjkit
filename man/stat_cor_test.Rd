@@ -17,7 +17,8 @@ stat_cor_test(
 )
 }
 \arguments{
-\item{x, y}{data.frame object. x and y must have the same \code{nrow}}
+\item{x, y}{data.frame object. x and y must have the same \code{nrow}, every
+column in x or y will be coerced to a numeric vector.}
 
 \item{use}{an optional character string giving a method for computing
 covariances in the presence of missing values. This must be (an
@@ -60,6 +61,7 @@ See \code{\link[stats]{cor.test}} and \code{\link[stats]{cor}}.
 }
 \examples{
   stat_cor_test(mtcars)
+  stat_cor_test(mtcars, cor_test = TRUE)
 }
 \author{
 Yun \email{yunyunpp96@outlook.com}
