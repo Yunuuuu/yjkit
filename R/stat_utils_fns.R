@@ -219,6 +219,9 @@ stat_cor_test <- function(x, y = NULL,
     y <- x
   } else {
     stopifnot(inherits(y, "data.frame"))
+    if (!identical(nrow(x), nrow(y))) stop(
+      "x and y must have same number of rows", call. = FALSE
+    )
   }
 
   use <- match.arg(use)
