@@ -197,6 +197,7 @@ stat_between_test <- function(data = NULL, x, y,
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @examples
 #'   stat_cor_test(mtcars)
+#'   stat_cor_test(mtcars, cor_test = TRUE)
 #' @export
 stat_cor_test <- function(x, y = NULL,
                           use = c("pairwise.complete.obs",
@@ -212,6 +213,7 @@ stat_cor_test <- function(x, y = NULL,
     stop("Argument cor_test should be a scalar logical value.",
          call. = FALSE)
   }
+
   if(is.null(y)){
     y <- x
   } else {
@@ -229,64 +231,68 @@ stat_cor_test <- function(x, y = NULL,
 
   if (cor_test) { # too slowly for large data
 
-    res <- lapply(x, function(x_sg){
+    res <- purrr::imap_dfr(x, function(data_x, name_x){
 
-      lapply(y, function(y_sg){
+      each_x_cor_y <- purrr::imap_dfr(y, function(data_y, name_y){
 
-        temp_res <- stats::cor.test(x_sg, y_sg,
+        temp_res <- stats::cor.test(data_x, data_y,
                                     alternative = alternative,
                                     method = method,
                                     exact = exact,
                                     ...)
 
         tibble::tibble(
+          y = name_y,
           !!cor_name := temp_res$estimate,
           pvalue = temp_res$p.value
         )
 
-      }) %>% tibble::enframe(name = "y", value = "value") %>%
-        tidyr::unnest(cols = dplyr::all_of("value"))
+      })
 
-    }) %>% tibble::enframe(name = "x", value = "value") %>%
-      tidyr::unnest(cols = dplyr::all_of("value"))
+      dplyr::mutate(each_x_cor_y, x = !!name_x, .before = 1)
+
+    })
 
     res[[cor_name]] <- unname(res[[cor_name]])
-    res
-
-  }
-
-  cor_res <- stats::cor(x, y, use = use, method = method) %>%
-    tibble::as_tibble(rownames = ".x.") %>%
-    tidyr::pivot_longer(cols = !dplyr::all_of(".x."),
-                        names_to = ".y.",
-                        values_to = "cor") %>%
-    rlang::set_names(nm = c("x", "y", cor_name))
-
-  if (identical(use, "pairwise.complete.obs")){
-
-    x_matrix <- as.matrix(x)
-    y_matrix <- as.matrix(y)
-    n_matrix <- t(!is.na(x_matrix)) %*% (!is.na(y_matrix))
-    n <- n_matrix[as.matrix(cor_res[c("x", "y")])]
-
-  } else if (identical(use, "complete.obs")||identical(use, "na.or.complete")){
-
-    bind_x_and_y <- dplyr::filter(
-      cbind(x, y),
-      dplyr::if_all(.cols = dplyr::everything(), ~!is.na(.x))
-    )
-    n <- nrow(bind_x_and_y)
 
   } else {
-    n <- nrow(x)
-  }
 
-  res <- dplyr::mutate(
-    cor_res, pvalue = cor_to_p(
-      .data[[cor_name]], n = !!n, method = !!method,
-      alternative = !!alternative
+    cor_res <- stats::cor(x, y, use = use, method = method) %>%
+      tibble::as_tibble(rownames = ".x.", .name_repair = "minimal") %>%
+      tidyr::pivot_longer(cols = !dplyr::all_of(".x."),
+                          names_to = ".y.",
+                          values_to = "cor") %>%
+      rlang::set_names(nm = c("x", "y", cor_name))
+
+    if (identical(use, "pairwise.complete.obs")){
+
+      x_matrix <- as.matrix(x)
+      y_matrix <- as.matrix(y)
+      n_matrix <- t(!is.na(x_matrix)) %*% (!is.na(y_matrix))
+      n <- n_matrix[as.matrix(cor_res[c("x", "y")])]
+
+    } else if (identical(use, "complete.obs") || identical(use, "na.or.complete")){
+
+      bind_x_and_y <- tidyr::drop_na(
+        dplyr::bind_cols(x, y, .name_repair = "minimal")
+      )
+      n <- nrow(bind_x_and_y)
+
+    } else {
+
+      n <- nrow(x)
+
+    }
+
+    res <- dplyr::mutate(
+      cor_res, pvalue = cor_to_p(
+        .data[[cor_name]], n = !!n,
+        method = !!method,
+        alternative = !!alternative
+      )
     )
-  )
+
+  }
 
   res
 
