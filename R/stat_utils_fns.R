@@ -169,7 +169,8 @@ stat_between_test <- function(data = NULL, x, y,
 #' of x and the columns of y, using one of Pearson's product moment correlation
 #' coefficient, Kendall's tau or Spearman's rho.
 #'
-#' @param x,y data.frame object. x and y must have the same \code{nrow}
+#' @param x,y data.frame object. x and y must have the same \code{nrow}, every
+#'   column in x or y will be coerced to a numeric vector.
 #' @param use an optional character string giving a method for computing
 #'   covariances in the presence of missing values. This must be (an
 #'   abbreviation of) one of the strings \code{"everything"}, \code{"all.obs"},
@@ -224,6 +225,9 @@ stat_cor_test <- function(x, y = NULL,
   method <- match.arg(method)
   alternative <- match.arg(alternative)
 
+  x <- dplyr::mutate(x, dplyr::across(.fns = as.double))
+  y <- dplyr::mutate(y, dplyr::across(.fns = as.double))
+
   cor_name <- switch (method,
                       pearson = "cor",
                       kendall= "tau",
@@ -268,6 +272,7 @@ stat_cor_test <- function(x, y = NULL,
 
       x_matrix <- as.matrix(x)
       y_matrix <- as.matrix(y)
+
       n_matrix <- t(!is.na(x_matrix)) %*% (!is.na(y_matrix))
       n <- n_matrix[as.matrix(cor_res[c("x", "y")])]
 
