@@ -25,8 +25,7 @@
 #'   1)}
 #' @param anno_statistic a scalar logical, Should test statistic be annotated in
 #'   the label
-#' @param label_sep see argument \code{label}. String to insert between the test
-#'   statistic and test P-value.
+#' @param label_sep String to insert between the test statistic and test P-value.
 #' @param anno_args  Other arguments passed on to \code{\link[ggplot2]{layer}}.
 #'   These are often aesthetics, used to set an aesthetic to a fixed value, like
 #'   colour = "red" or size = 3. They may also be parameters to the paired
