@@ -29,60 +29,61 @@ ggplot2::aes
 #' @return  A Scale object that can be added to a ggplot object
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @examples
-#'   ggscale_paletteer()
+#' ggscale_paletteer()
 #' @export
 ggscale_paletteer <- function(palette = "nejm",
                               scale = "colour",
                               type = c("discrete", "continuous", "binned"),
                               direction = 1,
-                              ...){
-
-  if (!requireNamespace("paletteer", quietly = TRUE)){
+                              ...) {
+  if (!requireNamespace("paletteer", quietly = TRUE)) {
     stop("paletteer needed for this function to work. Please install it",
-         call. = FALSE)
+      call. = FALSE
+    )
   }
 
-  if (!rlang::is_scalar_character(scale)){
-
+  if (!rlang::is_scalar_character(scale)) {
     warning("scale should be a scalar character, ",
-            "we'll take the first one and as.character",
-            call. = FALSE)
+      "we'll take the first one and as.character",
+      call. = FALSE
+    )
     scale <- as.character(scale)[[1]]
-
   }
 
-  if (!direction %in% c(-1, 1)) stop(
-    "direction must in c(-1, 1)"
-  )
+  if (!direction %in% c(-1, 1)) {
+    stop(
+      "direction must in c(-1, 1)"
+    )
+  }
 
   scale_match_color <- pmatch(scale, "color", nomatch = 0)
 
-  if (scale_match_color == 1){
+  if (scale_match_color == 1) {
     scale <- "color"
   }
 
-  if (scale_match_color == 0){
+  if (scale_match_color == 0) {
     scale <- match.arg(scale, c("colour", "fill"))
   }
 
   if (rlang::is_scalar_character(palette)) {
-
-    type <- match.arg(type)
-
-    type <- switch(
-      type,
+    type <- switch(match.arg(type),
       discrete = "d",
       continuous = "c",
       binned = "binned"
     )
 
     all_paletteer_palette <- stringr::str_c(
-      c(paletteer::palettes_d_names$package,
+      c(
+        paletteer::palettes_d_names$package,
         paletteer::palettes_c_names$package,
-        paletteer::palettes_dynamic_names$package),
-      c(paletteer::palettes_d_names$palette,
+        paletteer::palettes_dynamic_names$package
+      ),
+      c(
+        paletteer::palettes_d_names$palette,
         paletteer::palettes_c_names$palette,
-        paletteer::palettes_dynamic_names$palette),
+        paletteer::palettes_dynamic_names$palette
+      ),
       sep = "::"
     )
 
@@ -91,37 +92,33 @@ ggscale_paletteer <- function(palette = "nejm",
       pattern = stringr::str_c("ggsci::.*", palette, sep = "")
     )
 
-    if (length(ggsci_palette) > 0 || palette %in% all_paletteer_palette){
-
+    if (length(ggsci_palette) > 0 || palette %in% all_paletteer_palette) {
       if (length(ggsci_palette) > 0) {
-
         if (length(ggsci_palette) > 1) {
           warning("more than one ggsci palette found, we'll take the first one", call. = FALSE)
           palette <- ggsci_palette[[1]]
         } else {
           palette <- ggsci_palette
         }
-
       }
 
-      palette_args <- list(palette = palette,
-                           direction = direction,
-                           ...)
+      palette_args <- list(
+        palette = palette,
+        direction = direction,
+        ...
+      )
 
       palette_fn <- rlang::call2(
         stringr::str_c("scale_", scale, "_paletteer_", type),
         !!!palette_args,
         .ns = "paletteer"
       )
-
     }
-
   }
 
   if (direction == -1) palette <- rev(palette)
-  return( ggplot2::scale_discrete_manual(
+  return(ggplot2::scale_discrete_manual(
     aesthetics = scale,
     values = palette, ...
-  ) )
-
+  ))
 }

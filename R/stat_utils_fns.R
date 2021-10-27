@@ -191,6 +191,7 @@ stat_between_test <- function(data = NULL, x, y,
 #'   should use \code{\link[stats]{cor.test}} instead. If FALSE, the estimation
 #'   of P-value will use [stats::pt()] (for spearman or pearson) or
 #'   [stats::pnorm()] (for kendall). Default: \code{FALSE}.
+#' @param padj_method See [stats::p.adjust()] `method`.
 #' @param ... Other parameters passed to \code{\link[stats]{cor.test}}.
 #' @return a tibble of the Correlation results. (see
 #'   \code{\link[stats]{cor.test}}).
@@ -201,27 +202,33 @@ stat_between_test <- function(data = NULL, x, y,
 #'   stat_cor_test(mtcars, cor_test = TRUE)
 #' @export
 stat_cor_test <- function(x, y = NULL,
-                          use = c("pairwise.complete.obs",
-                                  "everything", "all.obs", "complete.obs",
-                                  "na.or.complete"),
+                          use = c(
+                            "pairwise.complete.obs",
+                            "everything", "all.obs", "complete.obs",
+                            "na.or.complete"
+                          ),
                           method = c("spearman", "pearson", "kendall"),
                           alternative = c("two.sided", "less", "greater"),
                           exact = TRUE, cor_test = FALSE,
-                          ...){
-
+                          padj_method = "fdr",
+                          ...) {
   stopifnot(inherits(x, "data.frame"))
   if (!rlang::is_scalar_logical(cor_test)) {
     stop("Argument cor_test should be a scalar logical value.",
-         call. = FALSE)
+      call. = FALSE
+    )
   }
 
-  if(is.null(y)){
+  if (is.null(y)) {
     y <- x
   } else {
     stopifnot(inherits(y, "data.frame"))
-    if (!identical(nrow(x), nrow(y))) stop(
-      "x and y must have same number of rows", call. = FALSE
-    )
+    if (!identical(nrow(x), nrow(y))) {
+      stop(
+        "x and y must have same number of rows",
+        call. = FALSE
+      )
+    }
   }
 
   use <- match.arg(use)
@@ -231,95 +238,91 @@ stat_cor_test <- function(x, y = NULL,
   x <- dplyr::mutate(x, dplyr::across(.fns = as.double))
   y <- dplyr::mutate(y, dplyr::across(.fns = as.double))
 
-  cor_name <- switch (method,
-                      pearson = "cor",
-                      kendall= "tau",
-                      spearman = "rho")
+  cor_name <- switch(method,
+    pearson = "cor",
+    kendall = "tau",
+    spearman = "rho"
+  )
 
   if (cor_test) { # too slowly for large data
 
-    res <- purrr::imap_dfr(x, function(data_x, name_x){
-
-      each_x_cor_y <- purrr::imap_dfr(y, function(data_y, name_y){
-
+    res <- purrr::imap_dfr(x, function(data_x, name_x) {
+      each_x_cor_y <- purrr::imap_dfr(y, function(data_y, name_y) {
         temp_res <- stats::cor.test(data_x, data_y,
-                                    alternative = alternative,
-                                    method = method,
-                                    exact = exact,
-                                    ...)
+          alternative = alternative,
+          method = method,
+          exact = exact,
+          ...
+        )
 
         tibble::tibble(
           y = name_y,
           !!cor_name := temp_res$estimate,
           pvalue = temp_res$p.value
         )
-
       })
 
       dplyr::mutate(each_x_cor_y, x = !!name_x, .before = 1)
-
     })
 
     res[[cor_name]] <- unname(res[[cor_name]])
 
   } else {
-
     cor_res <- stats::cor(x, y, use = use, method = method) %>%
       tibble::as_tibble(rownames = ".x.", .name_repair = "minimal") %>%
-      tidyr::pivot_longer(cols = !dplyr::all_of(".x."),
-                          names_to = ".y.",
-                          values_to = "cor") %>%
+      tidyr::pivot_longer(
+        cols = !dplyr::all_of(".x."),
+        names_to = ".y.",
+        values_to = "cor"
+      ) %>%
       rlang::set_names(nm = c("x", "y", cor_name))
 
-    if (identical(use, "pairwise.complete.obs")){
-
+    if (identical(use, "pairwise.complete.obs")) {
       x_matrix <- as.matrix(x)
       y_matrix <- as.matrix(y)
 
       n_matrix <- t(!is.na(x_matrix)) %*% (!is.na(y_matrix))
       n <- n_matrix[as.matrix(cor_res[c("x", "y")])]
-
-    } else if (identical(use, "complete.obs") || identical(use, "na.or.complete")){
-
+    } else if (identical(use, "complete.obs") || identical(use, "na.or.complete")) {
       bind_x_and_y <- tidyr::drop_na(
         dplyr::bind_cols(x, y, .name_repair = "minimal")
       )
       n <- nrow(bind_x_and_y)
-
     } else {
-
       n <- nrow(x)
-
     }
 
     res <- dplyr::mutate(
-      cor_res, pvalue = cor_to_p(
-        .data[[cor_name]], n = !!n,
+      cor_res,
+      pvalue = cor_to_p(
+        .data[[cor_name]],
+        n = !!n,
         method = !!method,
         alternative = !!alternative
       )
     )
-
   }
 
-  res
-
+  dplyr::mutate(
+    res,
+    padjust = stats::p.adjust(.data[["pvalue"]], method = !!padj_method)
+  )
 }
 
 # transform correlation coefficient to P-value
-cor_to_p <- function(cor, n, method, alternative){
-
+cor_to_p <- function(cor, n, method, alternative) {
   method <- match.arg(method, c("spearman", "pearson", "kendall"))
   alternative <- match.arg(alternative, c("two.sided", "less", "greater"))
 
   if (identical(method, "kendall")) {
     warning("Estimation of P-value for Kendall's correlation ",
-            "is not perfectly correct. Please try cor_test = TRUE.",
-            call. = FALSE)
-    statistic <- (3 * cor * sqrt(n * (n - 1)))/sqrt(2 * (2 * n + 5))
+      "is not perfectly correct. Please try cor_test = TRUE.",
+      call. = FALSE
+    )
+    statistic <- (3 * cor * sqrt(n * (n - 1))) / sqrt(2 * (2 * n + 5))
     p_fn <- "pnorm"
   } else {
-    statistic <- cor * sqrt((n - 2)/(1 - cor^2))
+    statistic <- cor * sqrt((n - 2) / (1 - cor^2))
     p_fn <- "pt"
   }
 
@@ -331,14 +334,14 @@ cor_to_p <- function(cor, n, method, alternative){
 
   if (identical(alternative, "two.sided")) statistic <- -abs(statistic)
 
-  p_expr <- rlang::call2( p_fn, q = statistic,
-                          lower.tail = lower.tail,
-                          .ns = "stats" )
+  p_expr <- rlang::call2(p_fn,
+    q = statistic,
+    lower.tail = lower.tail,
+    .ns = "stats"
+  )
 
   if (!identical(method, "kendall")) {
-
     p_expr <- rlang::call_modify(p_expr, df = n - 2)
-
   }
 
   p <- rlang::eval_tidy(p_expr)
