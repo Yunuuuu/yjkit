@@ -191,7 +191,7 @@ stat_between_test <- function(data = NULL, x, y,
 #'   should use \code{\link[stats]{cor.test}} instead. If FALSE, the estimation
 #'   of P-value will use [stats::pt()] (for spearman or pearson) or
 #'   [stats::pnorm()] (for kendall). Default: \code{FALSE}.
-#' @param padj_method See [stats::p.adjust()] `method`.
+#' @param padj_method See [p.adjust][stats::p.adjust()] `method`.
 #' @param ... Other parameters passed to \code{\link[stats]{cor.test}}.
 #' @return a tibble of the Correlation results. (see
 #'   \code{\link[stats]{cor.test}}).
