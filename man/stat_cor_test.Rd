@@ -13,6 +13,7 @@ stat_cor_test(
   alternative = c("two.sided", "less", "greater"),
   exact = TRUE,
   cor_test = FALSE,
+  padj_method = "fdr",
   ...
 )
 }
@@ -44,6 +45,8 @@ computed. Used for Kendall's tau and Spearman's rho. See
 should use \code{\link[stats]{cor.test}} instead. If FALSE, the estimation
 of P-value will use \code{\link[stats:TDist]{stats::pt()}} (for spearman or pearson) or
 \code{\link[stats:Normal]{stats::pnorm()}} (for kendall). Default: \code{FALSE}.}
+
+\item{padj_method}{See \link[stats:p.adjust]{p.adjust} \code{method}.}
 
 \item{...}{Other parameters passed to \code{\link[stats]{cor.test}}.}
 }

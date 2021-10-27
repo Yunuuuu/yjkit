@@ -47,8 +47,7 @@ character or numeric vector. Possible string values are: "left", "right",
 \item{anno_statistic}{a scalar logical, Should test statistic be annotated in
 the label}
 
-\item{label_sep}{see argument \code{label}. String to insert between the test
-statistic and test P-value.}
+\item{label_sep}{String to insert between the test statistic and test P-value.}
 
 \item{anno_args}{Other arguments passed on to \code{\link[ggplot2]{layer}}.
 These are often aesthetics, used to set an aesthetic to a fixed value, like

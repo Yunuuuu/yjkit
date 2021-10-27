@@ -46,7 +46,7 @@ the same package with a streamlined API. See
 \code{\link[paletteer]{paletteer-package}}
 }
 \examples{
-  ggscale_paletteer()
+ggscale_paletteer()
 }
 \author{
 Yun \email{yunyunpp96@outlook.com}
