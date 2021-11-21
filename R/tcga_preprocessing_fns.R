@@ -206,8 +206,8 @@ tcga_get_cli_xml <- function(project, path = here::here("rawdata", "GDCdata")) {
     directory = path
   )
   biospecimen <- dplyr::select(
-    dplyr::all_of(c("biospecimen", "bcr_patient_barcode",
-                    "bcr_sample_barcode", "sample_type"))
+    biospecimen,
+    dplyr::all_of(c("bcr_patient_barcode", "bcr_sample_barcode", "sample_type"))
   ) %>%
     dplyr::mutate(
       sample_barcode = stringr::str_sub(.data$bcr_sample_barcode, 1, 15)
@@ -325,8 +325,9 @@ tcga_get_cli_biotab <- function(project, path = here::here("rawdata", "GDCdata")
   ) ]]
 
   biospecimen <- dplyr::select(
+    biospecimen,
     dplyr::all_of(c(
-      "biospecimen", "bcr_patient_uuid", "bcr_sample_barcode", "sample_type"
+      "bcr_patient_uuid", "bcr_sample_barcode", "sample_type"
     ))
   ) %>%
     dplyr::mutate(
