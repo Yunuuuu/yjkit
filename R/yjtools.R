@@ -1,9 +1,9 @@
 #' yjtools: A toolkit package for Yun and Jin
 #'
-#' @description A miscellaneous toolkit including analysis algorithm,
+#' @description A miscellaneous toolkit including analytical algorithm,
 #'   visualization tools and other utility functions
-#' @section Analysis Functions: \code{\link{run_absolute}}: Automate ABSOLUTE
-#'   calling for multiple samples in parallel ways. \cr \cr
+#' @section analytical Functions: \code{\link{run_absolute}}: Automate ABSOLUTE
+#'   calling for numerous samples in parallel ways. \cr \cr
 #'   \code{\link{run_cibersort}}: Robust enumeration of cell subsets from tissue
 #'   expression profiles.\cr \cr \code{\link{run_arm_cnv}}: Caculate
 #'   Chromosome-arm-levels copy number variation.\cr \cr
