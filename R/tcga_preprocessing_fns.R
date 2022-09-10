@@ -49,12 +49,12 @@ tcga_remove_duplicated_samples <- function(barcode){
       sort = FALSE, name = "n_smp"
     )
 
-  if(any(barcode_tibble$n_smp > 1)) {
+  if (any(barcode_tibble$n_smp > 1)) {
     warning("There remains duplicated samples after applying Firehose TCGA replicated samples preprocessing criteria", call. = FALSE)
   }
 
   remove_duplicated_tibble <- barcode_tibble %>%
-    dplyr::slice_min(order_by = order, n = 1, with_ties = TRUE ) %>%
+    dplyr::slice_min(order_by = order, n = 1, with_ties = TRUE) %>%
     dplyr::ungroup() %>%
     dplyr::select(dplyr::all_of(c(
       "barcode", "bcr_patient_barcode",
@@ -110,7 +110,7 @@ tcga_get_cli_indexed <- function(project) {
   )
 
   colnames(bio)[replicated] <- stringr::str_c(
-    colnames(bio)[replicated],"_bio", sep = ""
+    colnames(bio)[replicated], "_bio", sep = ""
   )
 
   traits <- dplyr::full_join(
@@ -130,7 +130,7 @@ tcga_get_cli_indexed <- function(project) {
 #' @export
 tcga_get_cli_xml <- function(project, path = here::here("rawdata", "GDCdata")) {
 
-  if (!requireNamespace("TCGAbiolinks", quietly = TRUE)){
+  if (!requireNamespace("TCGAbiolinks", quietly = TRUE)) {
     stop("TCGAbiolinks needed for this function to work. Please install it",
          call. = FALSE)
   }
@@ -155,7 +155,7 @@ tcga_get_cli_xml <- function(project, path = here::here("rawdata", "GDCdata")) {
     directory = path
   )
 
-  for(i in c("admin","radiation","follow_up","drug","new_tumor_event")){
+  for (i in c("admin", "radiation", "follow_up", "drug", "new_tumor_event")) {
     message(i, appendLF = TRUE)
     cli_aux <- TCGAbiolinks::GDCprepare_clinic(
       cli_query,
@@ -163,7 +163,7 @@ tcga_get_cli_xml <- function(project, path = here::here("rawdata", "GDCdata")) {
       directory = path
     )
 
-    if(is.null(cli_aux) || nrow(cli_aux) == 0) next
+    if (is.null(cli_aux) || nrow(cli_aux) == 0) next
 
     # add suffix manually if it already exists
     cli_replicated <- colnames(cli_aux) %in% stringr::str_subset(
@@ -177,7 +177,7 @@ tcga_get_cli_xml <- function(project, path = here::here("rawdata", "GDCdata")) {
     )
 
     # merge clinical data by bcr_patient_barcode
-    if(!is.null(cli_aux)) {
+    if (!is.null(cli_aux)) {
       clinical <- dplyr::full_join(
         clinical, cli_aux,
         by = "bcr_patient_barcode"
@@ -236,7 +236,7 @@ tcga_get_cli_xml <- function(project, path = here::here("rawdata", "GDCdata")) {
 #' @export
 tcga_get_cli_biotab <- function(project, path = here::here("rawdata", "GDCdata")) {
 
-  if (!requireNamespace("TCGAbiolinks", quietly = TRUE)){
+  if (!requireNamespace("TCGAbiolinks", quietly = TRUE)) {
     stop("TCGAbiolinks needed for this function to work. Please install it",
          call. = FALSE)
   }
@@ -262,9 +262,9 @@ tcga_get_cli_biotab <- function(project, path = here::here("rawdata", "GDCdata")
     "clinical_patient_",
     tolower(stringr::str_sub(project, -4, -1)),
     sep = ""
-  ) ]]
+  )]]
 
-  for(
+  for (
     i in stringr::str_subset(
       names(clinical.BCRtab.all),
       "clinical_patient",
@@ -277,7 +277,7 @@ tcga_get_cli_biotab <- function(project, path = here::here("rawdata", "GDCdata")
       cli_aux,
       !(.data$bcr_patient_uuid %in% c("bcr_patient_uuid", "CDE_ID:"))
     )
-    if(is.null(cli_aux_test) || nrow(cli_aux_test) == 0) next
+    if (is.null(cli_aux_test) || nrow(cli_aux_test) == 0) next
 
     # add suffix manually if it already exists
     cli_replicated <- colnames(cli_aux) %in% stringr::str_subset(
@@ -289,7 +289,7 @@ tcga_get_cli_biotab <- function(project, path = here::here("rawdata", "GDCdata")
     colnames(cli_aux)[cli_replicated] <- stringr::str_c(colnames(cli_aux)[cli_replicated], "_", i, sep = "")
 
     # merge clinical data by bcr_patient_barcode
-    if(!is.null(cli_aux)) {
+    if (!is.null(cli_aux)) {
       clinical <- dplyr::full_join(
         clinical, cli_aux,
         by = c("bcr_patient_uuid", "bcr_patient_barcode")
@@ -318,11 +318,11 @@ tcga_get_cli_biotab <- function(project, path = here::here("rawdata", "GDCdata")
     bio_query, directory = path
   )
 
-  biospecimen <- biospecimen.BCRtab.all[[ stringr::str_c(
+  biospecimen <- biospecimen.BCRtab.all[[stringr::str_c(
     "biospecimen_sample_",
     tolower(stringr::str_sub(project, -4, -1)),
     sep = ""
-  ) ]]
+  )]]
 
   biospecimen <- dplyr::select(
     biospecimen,
@@ -341,7 +341,7 @@ tcga_get_cli_biotab <- function(project, path = here::here("rawdata", "GDCdata")
   # Combine clinical data with biospecimen data ---------------------------
 
   res <- dplyr::full_join(
-    clinical ,biospecimen, by = "bcr_patient_uuid"
+    clinical, biospecimen, by = "bcr_patient_uuid"
   ) %>%
     dplyr::select(
       dplyr::all_of(c("bcr_patient_uuid",
