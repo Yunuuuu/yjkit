@@ -25,13 +25,13 @@
 #' infer(gss, response = sex, success = "female", stat = "prop", p = .5)
 #' infer(gss, response = sex, success = "female", stat = "z", p = .5)
 #' infer(gss, college ~ sex,
-#'   success = "no degree",
-#'   stat = "diff in props",
-#'   order = c("female", "male")
+#'     success = "no degree",
+#'     stat = "diff in props",
+#'     order = c("female", "male")
 #' )
 #' infer(gss, hours ~ age + college, variables = c(age, college))
 #' @return A data.frame
-#' @export 
+#' @export
 infer <- function(
     data, formula, stat, reps = 2000L, level = 0.95,
     direction = "two-sided", null = NULL, type = NULL,
@@ -127,5 +127,11 @@ infer <- function(
     }
     # calculate P-value
     pvalue <- infer::get_pvalue(null_dist, obs_stat, direction = direction)
-    cbind(obs_stat, pvalue, ci)
+    if (length(explanatory) > 1L) {
+        Reduce(function(x, y) {
+            merge(x, y, by = "term", all = TRUE)
+        }, list(obs_stat, pvalue, ci))
+    } else {
+        cbind(obs_stat, pvalue, ci)
+    }
 }
