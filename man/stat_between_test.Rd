@@ -65,12 +65,12 @@ stat_between_test(mtcars, factor(vs), mpg, type = "n")
 stat_between_test(mtcars, factor(cyl), mpg, type = "p")
 stat_between_test(mtcars, factor(cyl), mpg, type = "n")
 stat_between_test(
-  x = lapply(mtcars[c(2, 8)], as.factor),
-  y = mtcars[c(1, 3, 4)], type = "n"
+    x = lapply(mtcars[c(2, 8)], as.factor),
+    y = mtcars[c(1, 3, 4)], type = "n"
 )
 stat_between_test(
-  x = factor(mtcars[["vs"]]),
-  y = mtcars["mpg"], type = "n"
+    x = factor(mtcars[["vs"]]),
+    y = mtcars["mpg"], type = "n"
 )
 }
 \author{
