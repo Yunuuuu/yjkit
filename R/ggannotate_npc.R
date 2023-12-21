@@ -24,92 +24,82 @@
 #'   warning.  If \code{TRUE} silently removes missing values.
 #' @return a ggplot2 layer object with annotation
 #' @examples
-#'   ggannotate_npc(label = "a", label_position = c(0.5, 0.5))
+#' ggannotate_npc(label = "a", label_position = c(0.5, 0.5))
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @export
 ggannotate_npc <- function(geom = "text",
                            label, label_position = "lefttop",
                            label_justification = NULL,
-                           ..., na.rm = FALSE){
-
-  if (is.numeric(label_position)){
-
-    if(!identical(length(label_position), 2L)) {
+                           ..., na.rm = FALSE) {
+  if (is.numeric(label_position)) {
+    if (!identical(length(label_position), 2L)) {
       stop("label_position should be a length-two when it is ",
-           "a numeric vector", call. = FALSE)
+        "a numeric vector",
+        call. = FALSE
+      )
     }
 
     if (is.null(label_justification)) {
-
       label_justification <- c(0.5, 0.5)
-
     }
-
-  } else if (is.character(label_position)){
-
-    if (identical(length(label_position), 1L)){
-
+  } else if (is.character(label_position)) {
+    if (identical(length(label_position), 1L)) {
       if (label_position %in% c(
         "lefttop", "righttop", "leftbottom", "rightbottom"
       )) {
-
         if (is.null(label_justification)) {
-
           label_justification <- switch(label_position,
-                                        lefttop = c(0, 0),
-                                        righttop = c(1, 0),
-                                        leftbottom = c(0, 1),
-                                        rightbottom = c(1, 1))
-
+            lefttop = c(0, 0),
+            righttop = c(1, 0),
+            leftbottom = c(0, 1),
+            rightbottom = c(1, 1)
+          )
         }
 
         label_position <- switch(label_position,
-                                 lefttop = c(0.02, 1.02),
-                                 righttop = c(0.98, 1.02),
-                                 leftbottom = c(0.02, -0.02),
-                                 rightbottom = c(0.98, -0.02))
-
+          lefttop = c(0.02, 1.02),
+          righttop = c(0.98, 1.02),
+          leftbottom = c(0.02, -0.02),
+          rightbottom = c(0.98, -0.02)
+        )
       } else {
         stop("label_position with a length-one character vector should be ",
-             "one of ",
-             '"lefttop", "righttop", "leftbottom", and "rightbottom".',
-             call. = FALSE)
+          "one of ",
+          '"lefttop", "righttop", "leftbottom", and "rightbottom".',
+          call. = FALSE
+        )
       }
-
-    } else if (identical(length(label_position), 2L)){
-
-      if (!label_position[[1]] %in% c("left", "right", "center", "middle")){
+    } else if (identical(length(label_position), 2L)) {
+      if (!label_position[[1]] %in% c("left", "right", "center", "middle")) {
         stop("the first element of label_position should be in ",
-             "one of ", 'c("left", "right", "center", "middle").',
-             call. = FALSE)
+          "one of ", 'c("left", "right", "center", "middle").',
+          call. = FALSE
+        )
       }
 
-      if (!label_position[[2]] %in% c("bottom", "top", "center", "middle")){
+      if (!label_position[[2]] %in% c("bottom", "top", "center", "middle")) {
         stop("the second element of label_position should be in ",
-             "one of ", 'c("bottom", "top", "center", "middle").',
-             call. = FALSE)
+          "one of ", 'c("bottom", "top", "center", "middle").',
+          call. = FALSE
+        )
       }
-
     } else {
       stop("label_position should be a ",
-           "length-one or length-two when it is a character vector",
-           call. = FALSE)
+        "length-one or length-two when it is a character vector",
+        call. = FALSE
+      )
     }
 
     label_position <- valid_npc(label_position)
 
     if (is.null(label_justification)) {
-
       label_justification <- c(0.5, 0.5)
-
     }
-
   } else {
-
     stop("label_position should be a length-two numeric vector ",
-         "or a length-one or -two character vector.",
-         call. = FALSE)
-
+      "or a length-one or -two character vector.",
+      call. = FALSE
+    )
   }
 
   ggannotate_npc_helper(
@@ -122,7 +112,6 @@ ggannotate_npc <- function(geom = "text",
     ...,
     na.rm = na.rm
   )
-
 }
 
 # annotate_npc <- function(label, x, y, ...)
@@ -151,12 +140,13 @@ ggannotate_npc <- function(geom = "text",
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @details See \code{\link[ggplot2]{annotate}}
 ggannotate_npc_helper <- function(geom, x = NULL, y = NULL,
-                                  ..., na.rm = FALSE){
-
-  if (!geom %in% c("text", "label")) stop(
-    'geom must be one of "text" and "label"',
-    call. = FALSE
-  )
+                                  ..., na.rm = FALSE) {
+  if (!geom %in% c("text", "label")) {
+    stop(
+      'geom must be one of "text" and "label"',
+      call. = FALSE
+    )
+  }
   position <- purrr::compact(list(
     x_npc = x, y_npc = y
   ))
@@ -175,7 +165,8 @@ ggannotate_npc_helper <- function(geom, x = NULL, y = NULL,
   if (length(n) > 1L) {
     bad <- lengths != 1L
     details <- paste(names(aesthetics)[bad], " (", lengths[bad], ")",
-                     sep = "", collapse = ", ")
+      sep = "", collapse = ", "
+    )
     rlang::abort(glue::glue("Unequal parameter lengths: {details}"))
   }
 
@@ -202,18 +193,21 @@ ggannotate_npc_helper <- function(geom, x = NULL, y = NULL,
 #'
 #' @param x numeric or character vector of coordinates.
 #' @return A numeric vector with values representing npc coordinates.
-valid_npc <- function(x){
-
+valid_npc <- function(x) {
   if (is.factor(x)) x <- as.character(x)
 
-  if (is.character(x)) return(
-    unname(c(left = 0, center = 0.5, right = 1,
-             bottom = 0, middle = 0.5, top = 1)[x]))
+  if (is.character(x)) {
+    return(
+      unname(c(
+        left = 0, center = 0.5, right = 1,
+        bottom = 0, middle = 0.5, top = 1
+      )[x])
+    )
+  }
 
   if (is.numeric(x)) {
     return(x)
   } else {
     return(as.numeric(x))
   }
-
 }

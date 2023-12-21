@@ -37,130 +37,121 @@
 #'   values of \code{x} term.
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @examples
-#'   stat_between_test(mtcars, factor(vs), mpg, type = "p")
-#'   stat_between_test(mtcars, factor(vs), mpg, type = "n")
-#'   stat_between_test(mtcars, factor(cyl), mpg, type = "p")
-#'   stat_between_test(mtcars, factor(cyl), mpg, type = "n")
-#'   stat_between_test(x = lapply(mtcars[c(2, 8)], as.factor),
-#'                     y = mtcars[c(1, 3, 4)], type = "n")
-#'   stat_between_test(x = factor(mtcars[["vs"]]),
-#'                     y = mtcars["mpg"], type = "n")
+#' stat_between_test(mtcars, factor(vs), mpg, type = "p")
+#' stat_between_test(mtcars, factor(vs), mpg, type = "n")
+#' stat_between_test(mtcars, factor(cyl), mpg, type = "p")
+#' stat_between_test(mtcars, factor(cyl), mpg, type = "n")
+#' stat_between_test(
+#'   x = lapply(mtcars[c(2, 8)], as.factor),
+#'   y = mtcars[c(1, 3, 4)], type = "n"
+#' )
+#' stat_between_test(
+#'   x = factor(mtcars[["vs"]]),
+#'   y = mtcars["mpg"], type = "n"
+#' )
 #' @export
 stat_between_test <- function(data = NULL, x, y,
                               type = c("nonparametric", "parametric"),
-                              ...){
-
+                              ...) {
   type <- match.arg(type)
 
-  if(!is.null(data)){
-
+  if (!is.null(data)) {
     stopifnot(inherits(data, "data.frame"))
     quo_list_x <- rlang::enquos(x)
     label_list_x <- rlang::enexprs(x)
     quo_list_y <- rlang::enquos(y)
     label_list_y <- rlang::enexprs(y)
 
-    y_list <- lapply(seq_along(quo_list_y), function(y_i){
-
-      x_list <- lapply(seq_along(quo_list_x), function(x_i){
-
-        stat_between_test_helper(data = data,
-                                 x = !!quo_list_x[[x_i]],
-                                 y = !!quo_list_y[[y_i]],
-                                 x_label = deparse1(label_list_x[[x_i]]),
-                                 y_label = deparse1(label_list_y[[y_i]]),
-                                 type = type, ...)
-
+    y_list <- lapply(seq_along(quo_list_y), function(y_i) {
+      x_list <- lapply(seq_along(quo_list_x), function(x_i) {
+        stat_between_test_helper(
+          data = data,
+          x = !!quo_list_x[[x_i]],
+          y = !!quo_list_y[[y_i]],
+          x_label = deparse1(label_list_x[[x_i]]),
+          y_label = deparse1(label_list_y[[y_i]]),
+          type = type, ...
+        )
       })
 
       dplyr::bind_rows(x_list)
-
     })
 
     res <- dplyr::bind_rows(y_list)
-
   } else {
-
     label_list_x <- rlang::enexprs(x)
     label_list_y <- rlang::enexprs(y)
 
     # check the right type of x
     if (is.character(x) || is.factor(x)) {
-
       x <- list(x = x)
       label_list_x <- lapply(label_list_x, deparse1)
-
-    } else if (is.list(x)){
-
+    } else if (is.list(x)) {
       if (!all(vapply(x, function(x) is.character(x) || is.factor(x), logical(1)))) {
         stop("x should be a character or a factor or a list ",
-             "of character or factor vector with same length.",                             call. = FALSE)
+          "of character or factor vector with same length.",
+          call. = FALSE
+        )
       }
 
       label_list_x <- names(x)
-
     } else {
       stop("unsupported type of ", typeof(x), " x, ",
-           "x should be a character or a factor or a list ",
-           "of character or factor vector with same length.",
-           call. = FALSE)
+        "x should be a character or a factor or a list ",
+        "of character or factor vector with same length.",
+        call. = FALSE
+      )
     }
 
 
     # check the right type of y
     if (is.numeric(y)) {
-
       y <- list(y = y)
       label_list_y <- lapply(label_list_y, deparse1)
-
-    } else if (is.list(y)){
-
+    } else if (is.list(y)) {
       if (!all(vapply(y, is.numeric, logical(1)))) {
         stop("y should be a numeric vector or a list ",
-             "of numeric vector with same length.",
-             call. = FALSE)
+          "of numeric vector with same length.",
+          call. = FALSE
+        )
       }
 
       label_list_y <- names(y)
-
     } else {
       stop("unsupported type of ", typeof(y), " y, ",
-           "y should be a numeric vector or a list ",
-           "of numeric vector with same length.",
-           call. = FALSE)
+        "y should be a numeric vector or a list ",
+        "of numeric vector with same length.",
+        call. = FALSE
+      )
     }
 
     # check the same length of x and y
-    if(!identical(
+    if (!identical(
       length(unique(vapply(c(x, y), length, integer(1)))), 1L
-    )){
+    )) {
       stop("the length of each vector in x and in y should be the same",
-           call. = FALSE)
+        call. = FALSE
+      )
     }
 
-    y_list <- lapply(seq_along(y), function(y_i){
-
-     x_list <- lapply(seq_along(x), function(x_i){
-
-
-        stat_between_test_helper(data = NULL,
-                                 x = x[[x_i]],
-                                 y = y[[y_i]],
-                                 x_label = label_list_x[[x_i]],
-                                 y_label = label_list_y[[y_i]],
-                                 type = type, ...)
-
+    y_list <- lapply(seq_along(y), function(y_i) {
+      x_list <- lapply(seq_along(x), function(x_i) {
+        stat_between_test_helper(
+          data = NULL,
+          x = x[[x_i]],
+          y = y[[y_i]],
+          x_label = label_list_x[[x_i]],
+          y_label = label_list_y[[y_i]],
+          type = type, ...
+        )
       })
-     dplyr::bind_rows(x_list)
-
+      dplyr::bind_rows(x_list)
     })
 
     res <- dplyr::bind_rows(y_list)
-
   }
 
   res
-
 }
 
 #' Correlation analysis
@@ -198,8 +189,8 @@ stat_between_test <- function(data = NULL, x, y,
 #' @details See \code{\link[stats]{cor.test}} and \code{\link[stats]{cor}}.
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @examples
-#'   stat_cor_test(mtcars)
-#'   stat_cor_test(mtcars, cor_test = TRUE)
+#' stat_cor_test(mtcars)
+#' stat_cor_test(mtcars, cor_test = TRUE)
 #' @export
 stat_cor_test <- function(x, y = NULL,
                           use = c(
@@ -266,7 +257,6 @@ stat_cor_test <- function(x, y = NULL,
     })
 
     res[[cor_name]] <- unname(res[[cor_name]])
-
   } else {
     cor_res <- stats::cor(x, y, use = use, method = method) %>%
       tibble::as_tibble(rownames = ".x.", .name_repair = "minimal") %>%
@@ -351,144 +341,83 @@ cor_to_p <- function(cor, n, method, alternative) {
   p
 }
 
-#' Proportional Hazards Regression Model analysis
-#'
-#' Fits a Cox proportional hazards regression model and extract log-rank test
-#' results and tidy informations. log-rank test is just a special case of the
-#' Cox model \code{(score test)}
-#'
-#' @param data a \code{data.frame} in which to interpret the variables named in
-#'   the formula, or in the subset and the weights argument.
-#' @param formula a formula object, with the response on the left of a ~
-#'   operator, and the terms on the right. The response must be a survival
-#'   object as returned by the Surv function.
-#' @param exponentiate Logical indicating whether or not to exponentiate the the
-#'   coefficient estimates. This is typical for logistic and multinomial
-#'   regressions, but a bad idea if there is no log or logit link. Defaults:
-#'   \code{TRUE}. Details see \code{\link[broom:tidy.coxph]{tidy}}
-#' @param conf_level The confidence level to use for the confidence interval.
-#'   Must be strictly greater than 0 and less than 1. Defaults to 0.95, which
-#'   corresponds to a 95 percent confidence interval. Details see
-#'   \code{\link[broom:tidy.coxph]{tidy}}. Default: \code{0.95}
-#' @param ... Additional arguments passed to \code{\link[survival:coxph]{coxph}}
-#' @return a list with two item. One for overall score test results and one for
-#'   summarized information corresponding to each term in the RHS of formula.
-#'   Details see \code{\link[broom:tidy.coxph]{tidy}}
-#' @examples
-#' survival_example_data <- readRDS(system.file(
-#'   "extdata", "survival_example_data.rds", package = "yjtools"
-#' ))
-#' stat_cox_test( survival_example_data,
-#'                survival::Surv(time, status) ~ ph.ecog + tt(age) )
-#' @author Yun \email{yunyunpp96@@outlook.com}
-#' @references \itemize{\item
-#'   \href{https://stats.stackexchange.com/questions/362381/logrank-p-value-for-2-groups}{logrank-p-value-for-2-groups}
-#'    \cr \item
-#'   \href{https://stats.stackexchange.com/questions/486806/the-logrank-test-statistic-is-equivalent-to-the-score-of-a-cox-regression-is-th}{the-logrank-test-statistic-is-equivalent-to-the-score-of-a-cox-regression-is-th}}
-#' @export
-stat_cox_test <- function(data, formula,
-                          exponentiate = TRUE, conf_level = 0.95,
-                          ...){
-
-  stopifnot(inherits(data, "data.frame"))
-
-  res <- survival::coxph(
-    formula = formula,
-    data = data, ...
-  )
-
-  list(
-    sctest_res =  tibble::tibble(
-      overall_var = deparse1(formula[[3]]),
-      p.value = summary(res)$sctest["pvalue"]
-    ),
-
-    term_res = broom::tidy(res, exponentiate = exponentiate,
-                           conf.int = TRUE,
-                           conf.level = conf_level)
-  )
-
-
-}
-
-
 # stat_between_test utility function --------------------------------------
-
 stat_between_test_helper <- function(data = NULL, x, y,
                                      x_label = NULL, y_label = NULL,
                                      type = c("nonparametric", "parametric"),
-                                     ...){
-
+                                     ...) {
   if (is.null(x_label)) x_label <- deparse1(rlang::enexpr(x))
   if (is.null(y_label)) y_label <- deparse1(rlang::enexpr(x))
 
-  if(!is.null(data)){
-
+  if (!is.null(data)) {
     stopifnot(inherits(data, "data.frame"))
     quo_x <- rlang::enquo(x)
     quo_y <- rlang::enquo(y)
     test_data <- dplyr::mutate(
-      data, ..x = !!quo_x, ..y = !!quo_y
+      data,
+      ..x = !!quo_x, ..y = !!quo_y
     )
 
-    if(!(is.character(test_data[["..x"]]) || is.factor(test_data[["..x"]]))) {
+    if (!(is.character(test_data[["..x"]]) || is.factor(test_data[["..x"]]))) {
       stop("x in data should be a type of character or factor but not a ",
-           "type of ", typeof(test_data[["..x"]]),
-           call. = FALSE)
+        "type of ", typeof(test_data[["..x"]]),
+        call. = FALSE
+      )
     }
 
     x_unique_levels <- length(unique(stats::na.omit(test_data[["..x"]])))
 
-    if(x_unique_levels < 2) stop("the unique values (omit missing values) for x in data should be at least 2", call. = FALSE)
+    if (x_unique_levels < 2) stop("the unique values (omit missing values) for x in data should be at least 2", call. = FALSE)
 
     if (!is.numeric(test_data[["..y"]])) stop("y in data must be a numeric vector", call. = FALSE)
-
   } else {
-
-    if(!identical(length(x), length(y))) {
+    if (!identical(length(x), length(y))) {
       stop("the length of vector x and y should be the same",
-           call. = FALSE)
+        call. = FALSE
+      )
     }
 
-    if(!(is.character(x) || is.factor(x))) {
+    if (!(is.character(x) || is.factor(x))) {
       stop("x should be a type of character or factor but not a ",
-           "type of ", typeof(x), call. = FALSE)
+        "type of ", typeof(x),
+        call. = FALSE
+      )
     }
 
     x_unique_levels <- length(unique(stats::na.omit(x)))
-    if(x_unique_levels < 2) stop("the unique values (omit missing values) for x should be at least 2", call. = FALSE)
+    if (x_unique_levels < 2) stop("the unique values (omit missing values) for x should be at least 2", call. = FALSE)
 
-    if (!is.numeric(y)) stop("y should be a numeric vector but not a type of ",
-                             typeof(y), call. = FALSE)
+    if (!is.numeric(y)) {
+      stop("y should be a numeric vector but not a type of ",
+        typeof(y),
+        call. = FALSE
+      )
+    }
 
-    test_data <- tibble::tibble( ..x = x, ..y = y )
-
+    test_data <- tibble::tibble(..x = x, ..y = y)
   }
 
   type <- match.arg(type)
   arg_dots <- rlang::enquos(...)
 
   if (type == "parametric") {
-
     if (x_unique_levels == 2) test_method <- "t.test"
     if (x_unique_levels > 2) test_method <- "aov"
-
   }
 
   if (type == "nonparametric") {
-
     if (x_unique_levels == 2) test_method <- "wilcox.test"
     if (x_unique_levels > 2) test_method <- "kruskal.test"
-
   }
 
   test_expr <- rlang::call2(
     test_method,
-    ..y ~ ..x, data = test_data, !!!arg_dots,
+    ..y ~ ..x,
+    data = test_data, !!!arg_dots,
     .ns = "stats"
   )
 
-  test_res <- broom::tidy( rlang::eval_tidy(test_expr) )
+  test_res <- broom::tidy(rlang::eval_tidy(test_expr))
 
   if (test_method == "aov") {
     test_res <- test_res %>%
@@ -496,21 +425,22 @@ stat_between_test_helper <- function(data = NULL, x, y,
       dplyr::select(!dplyr::all_of("term"))
   }
   test_res <- test_res %>%
-    dplyr::mutate(method = !!test_method,
-                  term_y = !!y_label,
-                  term_x = !!x_label) %>%
+    dplyr::mutate(
+      method = !!test_method,
+      term_y = !!y_label,
+      term_x = !!x_label
+    ) %>%
     dplyr::relocate(dplyr::all_of("method"),
-                    dplyr::all_of("term_y"),
-                    dplyr::all_of("term_x"),
-                    .before = 1)
+      dplyr::all_of("term_y"),
+      dplyr::all_of("term_x"),
+      .before = 1
+    )
 
   if (test_method %in% c("aov", "kruskal.test")) {
-    names(test_res$statistic) <- switch(
-      test_method,
+    names(test_res$statistic) <- switch(test_method,
       aov = "F",
       kruskal.test = "Chisq"
     )
   }
   test_res
-
 }

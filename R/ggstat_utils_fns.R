@@ -48,20 +48,23 @@ gganno_between_test <- function(data, mapping = NULL,
                                 anno_statistic = TRUE,
                                 label_sep = NULL,
                                 anno_args = list(fontface = "bold"),
-                                ...){
-
+                                ...) {
   test_aes <- c("x", "y") %in% names(mapping)
-  if (!all(test_aes))  stop(
-    paste0("lack of ", c("x", "y")[!test_aes], " aesthetic mappings")
-  )
+  if (!all(test_aes)) {
+    stop(
+      paste0("lack of ", c("x", "y")[!test_aes], " aesthetic mappings")
+    )
+  }
 
   type <- match.arg(type)
 
-  test_res <- stat_between_test_helper(data = data,
-                                       x = !!mapping$x,
-                                       y = !!mapping$y,
-                                       type = type,
-                                       ...)
+  test_res <- stat_between_test_helper(
+    data = data,
+    x = !!mapping$x,
+    y = !!mapping$y,
+    type = type,
+    ...
+  )
 
   if (anno_statistic) {
     label <- c(test_res$statistic, test_res$p.value) %>%
@@ -72,12 +75,14 @@ gganno_between_test <- function(data, mapping = NULL,
     label <- c(`P-value` = test_res$p.value)
   }
 
-  ggplot2::ggplot(data = data, mapping = mapping)+
-  rlang::exec(ggstat_anno_helper, geom = "text",
-              label = label, format_label = format_label,
-              label_position = label_position,
-              label_justification = label_justification,
-              label_sep = label_sep, !!!anno_args)
+  ggplot2::ggplot(data = data, mapping = mapping) +
+    rlang::exec(ggstat_anno_helper,
+      geom = "text",
+      label = label, format_label = format_label,
+      label_position = label_position,
+      label_justification = label_justification,
+      label_sep = label_sep, !!!anno_args
+    )
 }
 
 
@@ -129,14 +134,16 @@ gganno_between_test <- function(data, mapping = NULL,
 #' @param ... Other parameters for \code{\link[stats]{cor.test}}
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @examples
-#'   gganno_cor_test(mtcars, aes(disp, mpg)) +
-#'     ggplot2::geom_point()+
-#'     ggplot2::geom_smooth()
+#' gganno_cor_test(mtcars, aes(disp, mpg)) +
+#'   ggplot2::geom_point() +
+#'   ggplot2::geom_smooth()
 #' @export
 gganno_cor_test <- function(data, mapping = NULL,
-                            use = c("pairwise.complete.obs",
-                                    "everything", "all.obs", "complete.obs",
-                                    "na.or.complete"),
+                            use = c(
+                              "pairwise.complete.obs",
+                              "everything", "all.obs", "complete.obs",
+                              "na.or.complete"
+                            ),
                             method = c("spearman", "pearson", "kendall"),
                             alternative = c("two.sided", "less", "greater"),
                             exact = TRUE, conf_level = 0.95,
@@ -146,25 +153,28 @@ gganno_cor_test <- function(data, mapping = NULL,
                             anno_statistic = TRUE,
                             label_sep = NULL,
                             anno_args = list(fontface = "bold"),
-                            ...){
-
+                            ...) {
   test_aes <- c("x", "y") %in% names(mapping)
-  if (!all(test_aes))  stop(
-    paste0("lack of ", c("x", "y")[!test_aes], " aesthetic mappings")
-  )
+  if (!all(test_aes)) {
+    stop(
+      paste0("lack of ", c("x", "y")[!test_aes], " aesthetic mappings")
+    )
+  }
 
   use <- match.arg(use)
   method <- match.arg(method)
   alternative <- match.arg(alternative)
 
   test_res <- rlang::expr(
-    stats::cor.test(formula = ~ !!(mapping$x) + !!(mapping$y),
-                    data = data,
-                    use = use,
-                    method = method,
-                    alternative = alternative,
-                    exact = exact,
-                    conf.level = conf_level, ...)
+    stats::cor.test(
+      formula = ~ !!(mapping$x) + !!(mapping$y),
+      data = data,
+      use = use,
+      method = method,
+      alternative = alternative,
+      exact = exact,
+      conf.level = conf_level, ...
+    )
   )
   test_res <- rlang::eval_tidy(test_res)
 
@@ -177,13 +187,14 @@ gganno_cor_test <- function(data, mapping = NULL,
     label <- c(`P-value` = test_res$p.value)
   }
 
-  ggplot2::ggplot(data = data, mapping = mapping)+
-    rlang::exec(ggstat_anno_helper, geom = "text",
-                label = label, format_label = format_label,
-                label_position = label_position,
-                label_justification = label_justification,
-                label_sep = label_sep, !!!anno_args)
-
+  ggplot2::ggplot(data = data, mapping = mapping) +
+    rlang::exec(ggstat_anno_helper,
+      geom = "text",
+      label = label, format_label = format_label,
+      label_position = label_position,
+      label_justification = label_justification,
+      label_sep = label_sep, !!!anno_args
+    )
 }
 
 
@@ -222,18 +233,13 @@ ggstat_anno_helper <- function(geom, label, format_label = TRUE,
                                label_position = c(0.02, 0.98),
                                label_justification = c(0, 1),
                                label_sep = NULL,
-                               ...){
-
-  if(identical(length(label_position), 1L) && is.null(label_sep)) {
-
+                               ...) {
+  if (identical(length(label_position), 1L) && is.null(label_sep)) {
     label_sep <- "; "
-
   }
 
-  if(identical(length(label_position), 2L) && is.null(label_sep)) {
-
+  if (identical(length(label_position), 2L) && is.null(label_sep)) {
     label_sep <- "\n"
-
   }
 
   if (format_label && is.numeric(label)) {
@@ -242,15 +248,15 @@ ggstat_anno_helper <- function(geom, label, format_label = TRUE,
     label_format <- as.character(label)
   }
 
-  label <- stringr::str_c(names(label), label_format, sep = ": ",
-                          collapse = label_sep)
+  label <- stringr::str_c(names(label), label_format,
+    sep = ": ",
+    collapse = label_sep
+  )
 
-  ggannotate_npc(geom = geom, label = label,
-                 label_position = label_position,
-                 label_justification,
-                 ...)
-
+  ggannotate_npc(
+    geom = geom, label = label,
+    label_position = label_position,
+    label_justification,
+    ...
+  )
 }
-
-
-

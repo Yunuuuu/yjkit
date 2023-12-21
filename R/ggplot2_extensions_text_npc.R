@@ -99,7 +99,6 @@
 #' ggplot2::ggplot(data = mtcars) +
 #'   ggplot2::geom_point(mapping = aes(wt, mpg)) +
 #'   geom_label_npc(data = df, aes(x_npc = x, y_npc = y, label = text))
-
 geom_text_npc <- function(mapping = NULL, data = NULL,
                           stat = "identity", position = "identity",
                           ...,
@@ -142,12 +141,9 @@ geom_text_npc <- function(mapping = NULL, data = NULL,
 GeomTextNpc <- ggplot2::ggproto(
   "GeomTextNpc", ggplot2::Geom,
   required_aes = c("x_npc", "y_npc", "label"),
-
   default_aes = ggplot2::GeomText$default_aes,
-
   draw_panel = function(data, panel_params, coord, parse = FALSE,
                         na.rm = FALSE, check_overlap = FALSE) {
-
     data$x_npc <- valid_npc(data$x_npc)
     data$y_npc <- valid_npc(data$y_npc)
 
@@ -156,13 +152,14 @@ GeomTextNpc <- ggplot2::ggproto(
     data$x <- ranges$x[1] + data$x_npc * (ranges$x[2] - ranges$x[1])
     data$y <- ranges$y[1] + data$y_npc * (ranges$y[2] - ranges$y[1])
 
-    ggplot2::GeomText$draw_panel(data = data,
-                                 panel_params = panel_params,
-                                 coord = coord,
-                                 parse = parse,
-                                 na.rm = na.rm,
-                                 check_overlap = check_overlap)
+    ggplot2::GeomText$draw_panel(
+      data = data,
+      panel_params = panel_params,
+      coord = coord,
+      parse = parse,
+      na.rm = na.rm,
+      check_overlap = check_overlap
+    )
   },
-
   draw_key = ggplot2::GeomText$draw_key
 )

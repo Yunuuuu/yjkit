@@ -3,3 +3,4 @@
 ^data-raw$
 ^\.Rhistory$
 ^Scratch\.RConsole$
+^\.radian_history$

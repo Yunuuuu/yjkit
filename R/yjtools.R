@@ -1,18 +1,9 @@
 #' yjtools: A toolkit package for Yun and Jin
 #'
 #' @description A miscellaneous toolkit including analytical algorithm,
-#'   visualization tools and other utility functions
-#' @section analytical Functions: \code{\link{run_absolute}}: Automate ABSOLUTE
-#'   calling for numerous samples in parallel ways. \cr \cr
-#'   \code{\link{run_cibersort}}: Robust enumeration of cell subsets from tissue
-#'   expression profiles.\cr \cr \code{\link{run_arm_cnv}}: Caculate
-#'   Chromosome-arm-levels copy number variation.\cr \cr
-#'   \code{\link{run_ssgsea}}: ssGSEA according to GenePattern (modified) and
-#'   GSVA.\cr
-#' @section Visualization Functions: \code{\link{ggscale_paletteer}}:
-#'   Sequential, diverging and qualitative colour scales palette from
-#'   \code{paletteer}.\cr \cr \code{\link{ggannotate_npc}}: Create an ggplot2
-#'   annotation layer.\cr \cr \code{\link{geom_label_npc}} and
+#'   visualization tools and other utility functions.
+#' @section Visualization Functions: \code{\link{ggannotate_npc}}: Create an
+#'   ggplot2 annotation layer.\cr \cr \code{\link{geom_label_npc}} and
 #'   \code{\link{geom_text_npc}}: ggplot2 layer for Text or label put in
 #'   Normalised Parent Coordinates.\cr \cr \code{\link{gganno_between_test}}:
 #'   annotate group or condition comparisons in between-subjects designs in a
@@ -20,8 +11,6 @@
 #'   coefficient in a ggplot2 object\\cr
 #' @section Statistical Functions: \code{\link{stat_between_test}}: Between
 #'   group test.\cr \cr \code{\link{stat_cor_test}}: Correlation analysis.\cr
-#'   \cr \code{\link{stat_cox_test}}: Proportional Hazards Regression Model
-#'   analysis.\cr
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @docType package
 #' @name yjtools

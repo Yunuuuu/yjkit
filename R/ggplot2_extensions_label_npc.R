@@ -60,15 +60,12 @@ geom_label_npc <- function(mapping = NULL, data = NULL,
 GeomLabelNpc <- ggplot2::ggproto(
   "GeomLabelNpc", ggplot2::Geom,
   required_aes = c("x_npc", "y_npc", "label"),
-
   default_aes = ggplot2::GeomLabel$default_aes,
-
   draw_panel = function(data, panel_params, coord, parse = FALSE,
                         na.rm = FALSE,
                         label.padding = grid::unit(0.25, "lines"),
                         label.r = grid::unit(0.15, "lines"),
                         label.size = 0.25) {
-
     data$x_npc <- valid_npc(data$x_npc)
     data$y_npc <- valid_npc(data$y_npc)
 
@@ -77,15 +74,16 @@ GeomLabelNpc <- ggplot2::ggproto(
     data$x <- ranges$x[1] + data$x_npc * (ranges$x[2] - ranges$x[1])
     data$y <- ranges$y[1] + data$y_npc * (ranges$y[2] - ranges$y[1])
 
-    ggplot2::GeomLabel$draw_panel(data = data,
-                                  panel_params = panel_params,
-                                  coord = coord,
-                                  parse = parse,
-                                  na.rm = na.rm,
-                                  label.padding = label.padding,
-                                  label.r = label.r,
-                                  label.size = label.size)
+    ggplot2::GeomLabel$draw_panel(
+      data = data,
+      panel_params = panel_params,
+      coord = coord,
+      parse = parse,
+      na.rm = na.rm,
+      label.padding = label.padding,
+      label.r = label.r,
+      label.size = label.size
+    )
   },
-
   draw_key = ggplot2::GeomLabel$draw_key
 )

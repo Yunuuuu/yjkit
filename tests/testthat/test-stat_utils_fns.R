@@ -1,6 +1,6 @@
 testthat::test_that(
-  "test stat_between_test()", {
-
+  "test stat_between_test()",
+  {
     testthat::expect_snapshot_value(
       stat_between_test(mtcars, factor(vs), mpg, type = "p"),
       style = "serialize"
@@ -20,14 +20,13 @@ testthat::test_that(
       stat_between_test(mtcars, factor(cyl), mpg, type = "n"),
       style = "serialize"
     )
-
   }
 )
 
 
 testthat::test_that(
-  "test stat_cor_test()", {
-
+  "test stat_cor_test()",
+  {
     testthat::expect_snapshot_value(
       stat_cor_test(mtcars),
       style = "serialize"
@@ -57,37 +56,26 @@ testthat::test_that(
     # c("two.sided", "less", "greater") method = "pearson"
     testthat::expect_equal(
       stat_cor_test(mtcars, alternative = "two.sided", method = "pearson"),
-      stat_cor_test(mtcars, alternative = "two.sided",
-                    method = "pearson", cor_test = TRUE)
+      stat_cor_test(mtcars,
+        alternative = "two.sided",
+        method = "pearson", cor_test = TRUE
+      )
     )
 
     testthat::expect_equal(
       stat_cor_test(mtcars, alternative = "less", method = "pearson"),
-      stat_cor_test(mtcars, alternative = "less",
-                    method = "pearson", cor_test = TRUE)
+      stat_cor_test(mtcars,
+        alternative = "less",
+        method = "pearson", cor_test = TRUE
+      )
     )
 
     testthat::expect_equal(
       stat_cor_test(mtcars, alternative = "greater", method = "pearson"),
-      stat_cor_test(mtcars, alternative = "greater",
-                    method = "pearson", cor_test = TRUE)
+      stat_cor_test(mtcars,
+        alternative = "greater",
+        method = "pearson", cor_test = TRUE
+      )
     )
-
-  }
-)
-
-
-testthat::test_that(
-  "test stat_cox_test()", {
-
-    survival_example_data <- readRDS(
-      system.file("extdata", "survival_example_data.rds", package = "yjtools")
-    )
-    testthat::expect_snapshot_value(
-      stat_cox_test(survival_example_data,
-                    survival::Surv(time, status) ~ ph.ecog + tt(age)),
-      style = "serialize"
-    )
-
   }
 )

@@ -83,9 +83,9 @@ geom/stat. See \code{\link[ggplot2:geom_text]{geom_text}}}
 Create a ggplot2 object with annotation for Correlation coefficient
 }
 \examples{
-  gganno_cor_test(mtcars, aes(disp, mpg)) +
-    ggplot2::geom_point()+
-    ggplot2::geom_smooth()
+gganno_cor_test(mtcars, aes(disp, mpg)) +
+  ggplot2::geom_point() +
+  ggplot2::geom_smooth()
 }
 \author{
 Yun \email{yunyunpp96@outlook.com}

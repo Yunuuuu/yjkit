@@ -63,8 +63,8 @@ coefficient, Kendall's tau or Spearman's rho.
 See \code{\link[stats]{cor.test}} and \code{\link[stats]{cor}}.
 }
 \examples{
-  stat_cor_test(mtcars)
-  stat_cor_test(mtcars, cor_test = TRUE)
+stat_cor_test(mtcars)
+stat_cor_test(mtcars, cor_test = TRUE)
 }
 \author{
 Yun \email{yunyunpp96@outlook.com}

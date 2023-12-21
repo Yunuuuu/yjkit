@@ -82,12 +82,7 @@ tcga_remove_duplicated_samples <- function(barcode) {
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @export
 tcga_get_cli_indexed <- function(project) {
-  if (!requireNamespace("TCGAbiolinks", quietly = TRUE)) {
-    stop("TCGAbiolinks needed for this function to work. Please install it",
-      call. = FALSE
-    )
-  }
-
+  assert_pkg("TCGAbiolinks")
   cli <- TCGAbiolinks::GDCquery_clinic(
     project,
     type = "clinical"
@@ -351,10 +346,7 @@ tcga_get_cli_biotab <- function(project, path = here::here("rawdata", "GDCdata")
 
   # Combine clinical data with biospecimen data ---------------------------
 
-  res <- dplyr::full_join(
-    clinical, biospecimen,
-    by = "bcr_patient_uuid"
-  ) %>%
+  res <- dplyr::full_join(clinical, biospecimen, by = "bcr_patient_uuid") %>%
     dplyr::select(
       dplyr::all_of(c(
         "bcr_patient_uuid",

@@ -11,42 +11,26 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports: 
-  magrittr, 
-  tibble,
-  stringr,
-  dplyr,
-  forcats,
-  ggplot2,
-  rlang,
-  broom,
-  purrr,
-  tidyr,
-  tidyselect,
-  data.table
+    magrittr,
+    tibble,
+    stringr,
+    dplyr,
+    forcats,
+    ggplot2,
+    rlang (>= 1.1.0),
+    broom,
+    purrr,
+    tidyr,
+    tidyselect,
+    data.table
 Suggests: 
-  glue,
-  matrixStats,
-  methods,
-  vctrs,
-  e1071, 
-  paletteer,
-  preprocessCore,
-  S4Vectors,
-  TCGAbiolinks,
-  BiocParallel,
-  GenomicRanges,
-  ABSOLUTE,
-  Biobase,
-  GSEABase,
-  GSVA,
-  survival,
-  fastmatch,
-  GenomeInfoDb,
-  SummarizedExperiment,
-  testthat (>= 3.0.0)
+    TCGAbiolinks,
+    paletteer,
+    glue,
+    testthat (>= 3.0.0)
 ByteCompile: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 Config/testthat/edition: 3
 Depends: 
     R (>= 3.5.0)
