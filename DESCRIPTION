@@ -27,7 +27,8 @@ Suggests:
     TCGAbiolinks,
     paletteer,
     glue,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    infer
 ByteCompile: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
