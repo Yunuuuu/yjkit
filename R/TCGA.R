@@ -113,7 +113,7 @@ tcga_get_cli_indexed <- function(project) {
     sep = ""
   )
 
-  traits <- dplyr::full_join(
+  dplyr::full_join(
     cli, bio,
     by = "bcr_patient_barcode"
   ) %>%
@@ -221,7 +221,7 @@ tcga_get_cli_xml <- function(project, path = here::here("rawdata", "GDCdata")) {
 
   # combine clinical data with biospecimen data ---------------------------
 
-  res <- dplyr::full_join(
+  dplyr::full_join(
     clinical, biospecimen,
     by = "bcr_patient_barcode"
   ) %>%
@@ -346,7 +346,7 @@ tcga_get_cli_biotab <- function(project, path = here::here("rawdata", "GDCdata")
 
   # Combine clinical data with biospecimen data ---------------------------
 
-  res <- dplyr::full_join(clinical, biospecimen, by = "bcr_patient_uuid") %>%
+  dplyr::full_join(clinical, biospecimen, by = "bcr_patient_uuid") %>%
     dplyr::select(
       dplyr::all_of(c(
         "bcr_patient_uuid",

@@ -7,18 +7,9 @@ NULL
 
 #' format a numeric vector
 #'
-#' @param x a atomic vector
-#' @return a character vector containing the formatted x
+#' @param x An atomic vector
+#' @return A character vector containing the formatted x
 format_num <- function(x) {
-  if (is.numeric(x)) {
-    x <- dplyr::if_else(
-      x < 0.01,
-      sprintf("%1.2e", x),
-      sprintf("%.3f", x)
-    )
-  }
-
-  if (is.factor(x)) x <- as.character(x)
-
-  x
+  assert_(x, is.numeric, "numeric")
+  data.table::fifelse(x < 0.01, sprintf("%1.2e", x), sprintf("%.3f", x))
 }

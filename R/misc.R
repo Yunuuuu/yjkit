@@ -7,6 +7,7 @@
 #' @param data A data frame or data.table
 #' @export
 cols_c <- function(..., data) {
+  assert_pkg("tidyselect")
   arg_dots <- rlang::enquos(c(...))
   tidyselect::eval_select(arg_dots, data = data)
 }

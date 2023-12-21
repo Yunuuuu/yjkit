@@ -203,12 +203,8 @@ stat_cor_test <- function(x, y = NULL,
                           exact = TRUE, cor_test = FALSE,
                           padj_method = "fdr",
                           ...) {
-  stopifnot(inherits(x, "data.frame"))
-  if (!rlang::is_scalar_logical(cor_test)) {
-    stop("Argument cor_test should be a scalar logical value.",
-      call. = FALSE
-    )
-  }
+  assert_data_frame(x)
+  assert_bool(cor_test)
 
   if (is.null(y)) {
     y <- x

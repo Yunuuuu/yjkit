@@ -21,9 +21,9 @@ Imports:
     broom,
     purrr,
     tidyr,
-    tidyselect,
     data.table
 Suggests: 
+    tidyselect,
     TCGAbiolinks,
     paletteer,
     glue,

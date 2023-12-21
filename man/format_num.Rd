@@ -7,10 +7,10 @@
 format_num(x)
 }
 \arguments{
-\item{x}{a atomic vector}
+\item{x}{An atomic vector}
 }
 \value{
-a character vector containing the formatted x
+A character vector containing the formatted x
 }
 \description{
 format a numeric vector
