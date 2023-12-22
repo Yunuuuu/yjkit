@@ -60,7 +60,7 @@ infer <- function(
     } else {
         stat <- match.arg(stat, infer:::implemented_stats)
     }
-    # check if we need Declare a null hypothesis ---------------
+    # prepare a null hypothesis ---------------
     null_hypo <- quote(infer::hypothesize(
         model,
         null = null,
@@ -83,6 +83,7 @@ infer <- function(
         model <- eval(null_hypo)
         null_dist <- model
     } else {
+        # for untheorized stats, we should declare null hypothesis first
         if (!any(stat == infer:::untheorized_stats)) {
             model <- eval(null_hypo)
         }
@@ -122,6 +123,11 @@ infer <- function(
             reps = ci_reps, type = attr(model, "type")
         )
         boot_dist <- infer::calculate(x = boot_dist, stat = stat, ...)
+        # for small samples, boot_dist may contain `NA` values
+        # waiting for `infer` upstream to fix
+        # Now, we just remove the NA values before calculate CI for termporary
+        # fix
+        boot_dist <- boot_dist[!is.na(boot_dist$stat), ]
         # calculate Confidence intervals
         ci <- infer::get_ci(x = boot_dist, level = level, type = type)
     }

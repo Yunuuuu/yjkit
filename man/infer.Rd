@@ -126,9 +126,9 @@ infer(gss, response = hours, stat = "median", med = 40)
 infer(gss, response = sex, success = "female", stat = "prop", p = .5)
 infer(gss, response = sex, success = "female", stat = "z", p = .5)
 infer(gss, college ~ sex,
-  success = "no degree",
-  stat = "diff in props",
-  order = c("female", "male")
+    success = "no degree",
+    stat = "diff in props",
+    order = c("female", "male")
 )
 infer(gss, hours ~ age + college, variables = c(age, college))
 }
