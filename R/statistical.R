@@ -50,13 +50,13 @@
 #'     y = mtcars["mpg"], type = "n"
 #' )
 #' @export
-stat_between_test <- function(data = NULL, x, y,
-                              type = c("nonparametric", "parametric"),
-                              ...) {
+stat_between_test <- function(
+    data = NULL, x, y,
+    type = c("nonparametric", "parametric"),
+    ...) {
     type <- match.arg(type)
-
+    assert_data_frame(data, null_ok = TRUE)
     if (!is.null(data)) {
-        stopifnot(inherits(data, "data.frame"))
         quo_list_x <- rlang::enquos(x)
         label_list_x <- rlang::enexprs(x)
         quo_list_y <- rlang::enquos(y)
@@ -73,7 +73,6 @@ stat_between_test <- function(data = NULL, x, y,
                     type = type, ...
                 )
             })
-
             dplyr::bind_rows(x_list)
         })
 
@@ -102,8 +101,6 @@ stat_between_test <- function(data = NULL, x, y,
                 call. = FALSE
             )
         }
-
-
         # check the right type of y
         if (is.numeric(y)) {
             y <- list(y = y)
@@ -204,27 +201,18 @@ stat_cor_test <- function(x, y = NULL,
                           padj_method = "fdr",
                           ...) {
     assert_data_frame(x)
+    assert_data_frame(y, null_ok = TRUE)
     assert_bool(cor_test)
-
-    if (is.null(y)) {
-        y <- x
-    } else {
-        stopifnot(inherits(y, "data.frame"))
-        if (!identical(nrow(x), nrow(y))) {
-            stop(
-                "x and y must have same number of rows",
-                call. = FALSE
-            )
-        }
+    y <- y %||% x
+    if (!identical(nrow(x), nrow(y))) {
+        cli::cli_abort("{.arg x} and {.arg y} must have same number of rows")
     }
 
     use <- match.arg(use)
     method <- match.arg(method)
     alternative <- match.arg(alternative)
-
     x <- dplyr::mutate(x, dplyr::across(.fns = as.double))
     y <- dplyr::mutate(y, dplyr::across(.fns = as.double))
-
     cor_name <- switch(method,
         pearson = "cor",
         kendall = "tau",
@@ -241,17 +229,14 @@ stat_cor_test <- function(x, y = NULL,
                     exact = exact,
                     ...
                 )
-
                 tibble::tibble(
                     y = name_y,
                     !!cor_name := temp_res$estimate,
                     pvalue = temp_res$p.value
                 )
             })
-
             dplyr::mutate(each_x_cor_y, x = !!name_x, .before = 1)
         })
-
         res[[cor_name]] <- unname(res[[cor_name]])
     } else {
         cor_res <- stats::cor(x, y, use = use, method = method) %>%
@@ -288,7 +273,6 @@ stat_cor_test <- function(x, y = NULL,
             )
         )
     }
-
     dplyr::mutate(
         res,
         padjust = stats::p.adjust(.data[["pvalue"]], method = !!padj_method)
@@ -344,7 +328,6 @@ stat_between_test_helper <- function(data = NULL, x, y,
                                      ...) {
     if (is.null(x_label)) x_label <- deparse1(rlang::enexpr(x))
     if (is.null(y_label)) y_label <- deparse1(rlang::enexpr(x))
-
     if (!is.null(data)) {
         stopifnot(inherits(data, "data.frame"))
         quo_x <- rlang::enquo(x)

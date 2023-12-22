@@ -128,7 +128,7 @@ coordinates of each label instead of character strings.
 }
 
 \examples{
-
+library(ggplot2)
 df <- data.frame(
   x = c(0, 0, 1, 1, 0.5),
   x_chr = c("left", "left", "right", "right", "center"),
