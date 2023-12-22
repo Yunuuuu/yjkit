@@ -15,7 +15,6 @@ Imports:
     tibble,
     stringr,
     dplyr,
-    forcats,
     ggplot2,
     rlang (>= 1.1.0),
     broom,

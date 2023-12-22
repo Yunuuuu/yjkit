@@ -127,10 +127,10 @@ tcga_get_cli_indexed <- function(project) {
 #' download TCGA clinical data from xml files ------------------------------
 #' @param project TCGA project ID (see \code{TCGAbiolinks::getGDCprojects()})
 #' @param path Directory/Folder where the data was downloaded. Default:
-#'   \code{here::here("rawdata", "GDCdata")}
+#'   \code{"rawdata/GDCdata"}
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @export
-tcga_get_cli_xml <- function(project, path = here::here("rawdata", "GDCdata")) {
+tcga_get_cli_xml <- function(project, path = "rawdata/GDCdata") {
   if (!requireNamespace("TCGAbiolinks", quietly = TRUE)) {
     stop("TCGAbiolinks needed for this function to work. Please install it",
       call. = FALSE
@@ -239,7 +239,7 @@ tcga_get_cli_xml <- function(project, path = here::here("rawdata", "GDCdata")) {
 #' @inheritParams tcga_get_cli_xml
 #' @author Yun \email{yunyunpp96@@outlook.com}
 #' @export
-tcga_get_cli_biotab <- function(project, path = here::here("rawdata", "GDCdata")) {
+tcga_get_cli_biotab <- function(project, path = "rawdata/GDCdata") {
   if (!requireNamespace("TCGAbiolinks", quietly = TRUE)) {
     stop("TCGAbiolinks needed for this function to work. Please install it",
       call. = FALSE

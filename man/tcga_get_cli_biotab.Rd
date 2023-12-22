@@ -4,13 +4,13 @@
 \alias{tcga_get_cli_biotab}
 \title{download TCGA clinical data from Biotab files ---------------------------}
 \usage{
-tcga_get_cli_biotab(project, path = here::here("rawdata", "GDCdata"))
+tcga_get_cli_biotab(project, path = "rawdata/GDCdata")
 }
 \arguments{
 \item{project}{TCGA project ID (see \code{TCGAbiolinks::getGDCprojects()})}
 
 \item{path}{Directory/Folder where the data was downloaded. Default:
-\code{here::here("rawdata", "GDCdata")}}
+\code{"rawdata/GDCdata"}}
 }
 \description{
 download TCGA clinical data from Biotab files ---------------------------

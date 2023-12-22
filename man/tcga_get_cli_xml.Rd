@@ -4,13 +4,13 @@
 \alias{tcga_get_cli_xml}
 \title{download TCGA clinical data from xml files ------------------------------}
 \usage{
-tcga_get_cli_xml(project, path = here::here("rawdata", "GDCdata"))
+tcga_get_cli_xml(project, path = "rawdata/GDCdata")
 }
 \arguments{
 \item{project}{TCGA project ID (see \code{TCGAbiolinks::getGDCprojects()})}
 
 \item{path}{Directory/Folder where the data was downloaded. Default:
-\code{here::here("rawdata", "GDCdata")}}
+\code{"rawdata/GDCdata"}}
 }
 \description{
 download TCGA clinical data from xml files ------------------------------
