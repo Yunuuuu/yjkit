@@ -75,15 +75,17 @@ bias-corrected interval as other options.}
 
 \item{ci_reps}{Number of bootstrap times to calculate confidence interval.}
 
-\item{...}{
-  Arguments passed on to \code{\link[infer:calculate]{infer::calculate}}
-  \describe{
-    \item{\code{order}}{A string vector of specifying the order in which the levels of
+\item{...}{Other arguments passed to \link[infer:calculate]{infer::calculate}.
+\itemize{
+\item \code{order}: A string vector of specifying the order in which the levels of
 the explanatory variable should be ordered for subtraction (or division
 for ratio-based statistics), where \code{order = c("first", "second")} means
-\code{("first" - "second")}, or the analogue for ratios. Needed for inference on
-difference in means, medians, proportions, ratios, t, and z statistics.}
-  }}
+\code{("first" - "second")}, or the analogue for ratios. Needed for inference
+on difference in means, medians, proportions, ratios, t, and z statistics.
+\item \code{...}: To pass options like \code{na.rm = TRUE} into functions like \code{\link[=mean]{mean()}},
+\code{\link[=sd]{sd()}}, etc. Can also be used to supply hypothesized null values for the
+"t" statistic or additional arguments to \code{\link[stats:chisq.test]{stats::chisq.test()}}.
+}}
 
 \item{variables}{A set of unquoted column names in the data to permute
 (independently of each other). Defaults to only the response variable. Note
@@ -113,7 +115,7 @@ hypotheses when the specified response variable is continuous.}
 point null hypotheses.}
 }
 \value{
-A data.frame
+A \link{data.frame}
 }
 \description{
 Statistical Inference with Permutation

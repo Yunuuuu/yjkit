@@ -14,7 +14,15 @@
 #' @inheritParams infer::get_pvalue
 #' @inheritParams infer::specify
 #' @inheritParams infer::generate
-#' @inheritDotParams infer::calculate -x -stat
+#' @param ... Other arguments passed to [infer::calculate].
+#'  - `order`: A string vector of specifying the order in which the levels of
+#'    the explanatory variable should be ordered for subtraction (or division
+#'    for ratio-based statistics), where `order = c("first", "second")` means
+#'    `("first" - "second")`, or the analogue for ratios. Needed for inference
+#'    on difference in means, medians, proportions, ratios, t, and z statistics.
+#'  - `...`: To pass options like `na.rm = TRUE` into functions like [mean()],
+#'    [sd()], etc. Can also be used to supply hypothesized null values for the
+#'    "t" statistic or additional arguments to [stats::chisq.test()].
 #' @seealso
 #' <https://infer.tidymodels.org/articles/observed_stat_examples.html>
 #' @examples
@@ -30,7 +38,7 @@
 #'     order = c("female", "male")
 #' )
 #' infer(gss, hours ~ age + college, variables = c(age, college))
-#' @return A data.frame
+#' @return A [data.frame]
 #' @export
 infer <- function(
     data, formula, stat, reps = 2000L, level = 0.95,
@@ -39,6 +47,7 @@ infer <- function(
     variables = NULL, response = NULL, explanatory = NULL, success = NULL,
     p = NULL, mu = NULL, med = NULL, sigma = NULL) {
     assert_pkg("infer")
+    # Specify response and explanatory variables --------------
     response <- rlang::enquo(response)
     explanatory <- rlang::enquo(explanatory)
     if (missing(formula)) {
@@ -55,17 +64,13 @@ infer <- function(
             success = success
         )
     }
+    # prepare arguments ---------------
     explanatory <- infer:::explanatory_name(model)
     if (length(explanatory) > 1L) {
+        # always use infer::fit to calculate observed statistical
     } else {
-        stat <- match.arg(stat, infer:::implemented_stats)
+        stat <- infer:::check_calculate_stat(stat)
     }
-    # prepare a null hypothesis ---------------
-    null_hypo <- quote(infer::hypothesize(
-        model,
-        null = null,
-        p = p, mu = mu, med = med, sigma = sigma
-    ))
     if (length(explanatory)) {
         null <- null %||% "independence"
         null_type <- "permute"
@@ -77,41 +82,44 @@ infer <- function(
             null_type <- "bootstrap"
         }
     }
-    # Calculating the observed statistic
+
+    # prepare null hypothesis ---------------
+    null_model <- infer::hypothesize(
+        model,
+        null = null,
+        p = p, mu = mu, med = med, sigma = sigma
+    )
+
     if (length(explanatory) > 1L) {
+        # Calculating the observed statistic ---------
         obs_stat <- infer::fit(model)
-        model <- eval(null_hypo)
-        null_dist <- model
     } else {
-        # for untheorized stats, we should declare null hypothesis first
+        # for theorized stats, we should declare null hypothesis first ----
         if (!any(stat == infer:::untheorized_stats)) {
-            model <- eval(null_hypo)
+            model <- null_model
         }
+        # Calculating the observed statistic -----------------
         obs_stat <- infer::calculate(x = model, stat = stat, ...)
-        if (any(stat == infer:::untheorized_stats)) {
-            null_dist <- eval(null_hypo)
-        } else {
-            null_dist <- model
-        }
     }
+
     # generating the null distribution
     if (null_type == "permute") {
         variables <- rlang::enquo(variables)
         if (rlang::quo_is_null(variables)) {
-            variables <- attr(model, "response")
+            variables <- attr(null_model, "response")
         }
-        null_dist <- infer::generate(null_dist,
+        null_dist <- infer::generate(null_model,
             reps = null_reps, type = null_type,
             variables = !!variables
         )
     } else {
-        null_dist <- infer::generate(null_dist,
+        null_dist <- infer::generate(null_model,
             reps = null_reps, type = null_type
         )
     }
+    # calculate Confidence intervals
     if (length(explanatory) > 1L) {
         null_dist <- infer::fit(null_dist)
-        # calculate Confidence intervals
         ci <- infer::get_ci(
             x = null_dist,
             level = level, type = type,
