@@ -22,3 +22,13 @@ format_num <- function(x) {
         sprintf("%.3f", x)
     )
 }
+
+pull <- function(.data, var = -1, name = NULL) {
+    var <- tidyselect::vars_pull(names(.data), !!rlang::enquo(var))
+    name <- rlang::enquo(name)
+    if (rlang::quo_is_null(name)) {
+        return(.data[[var]])
+    }
+    name <- tidyselect::vars_pull(names(.data), !!name)
+    rlang::set_names(.data[[var]], nm = .data[[name]])
+}

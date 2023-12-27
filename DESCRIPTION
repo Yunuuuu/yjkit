@@ -20,7 +20,8 @@ Imports:
     broom,
     purrr,
     tidyr,
-    data.table
+    data.table,
+    cli
 Suggests: 
     tidyselect,
     TCGAbiolinks,

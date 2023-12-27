@@ -8,6 +8,7 @@ infer(
   data,
   formula,
   stat,
+  paired = NULL,
   reps = 2000L,
   level = 0.95,
   direction = "two-sided",
@@ -40,6 +41,9 @@ options include \code{"mean"}, \code{"median"}, \code{"sum"}, \code{"sd"}, \code
 \code{"odds ratio"}, \code{"ratio of means"}, and \code{"correlation"}. \code{infer} only
 supports theoretical tests on one or two means via the \code{"t"} distribution
 and one or two proportions via the \code{"z"}.}
+
+\item{paired}{A column in the data to specify the observation (sample id), if
+not \code{NULL}, paired comparison will be applied.}
 
 \item{reps}{Fast way to set both \code{null_reps} and \code{ci_reps}.}
 
@@ -133,6 +137,12 @@ infer(gss, college ~ sex,
     order = c("female", "male")
 )
 infer(gss, hours ~ age + college, variables = c(age, college))
+gss$hours_previous <- gss$hours + 5 - rpois(nrow(gss), 4.8)
+gss$.id <- seq_len(nrow(gss))
+gss_paired <- tidyr::pivot_longer(gss, cols = c(hours, hours_previous))
+infer(gss_paired, value ~ name,
+    stat = "mean", paired = .id
+)
 }
 \seealso{
 \url{https://infer.tidymodels.org/articles/observed_stat_examples.html}
